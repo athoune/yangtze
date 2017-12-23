@@ -30,7 +30,8 @@ func decode(in []byte) (uint32, error) {
 type Index struct {
 	words     *radix.Tree
 	sequences *radix.Tree
-	cpt       uint32
+	cpt_word  uint32
+	cpt_seq   uint32
 	tokenizer analysis.Tokenizer
 	cache     *registry.Cache
 }
@@ -52,7 +53,16 @@ func New() (*Index, error) {
 
 func (i *Index) WatchFor(sequence []byte) error {
 	for _, token := range i.tokenizer.Tokenize(sequence) {
-		fmt.Println(token)
+		k, ok := i.words.Get(token.Term)
+		var cpt uint32
+		if ok {
+			cpt = k.(uint32)
+		} else {
+			i.cpt_word += 1
+			cpt = i.cpt_word
+			i.words, _, ok = i.words.Insert(token.Term, cpt)
+		}
+		fmt.Println(token.Term, cpt)
 	}
 	return nil
 }
