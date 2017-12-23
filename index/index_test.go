@@ -1,6 +1,7 @@
 package index
 
 import (
+	"fmt"
 	"testing"
 )
 
@@ -25,4 +26,10 @@ func TestWatchFor(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
+
+	l, err := i.Sequence([]byte("Aunt pim and the captain"))
+	if err != nil {
+		t.Error(err)
+	}
+	fmt.Println(l)
 }

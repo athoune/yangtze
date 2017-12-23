@@ -80,3 +80,20 @@ func (i *Index) WatchFor(sequence []byte) (uint32, error) {
 
 	return ks, nil
 }
+
+func (i *Index) Sequence(line []byte) ([]byte, error) {
+	tokens := i.tokenizer.Tokenize(line)
+	var seq bytes.Buffer
+	for _, token := range tokens {
+		k, ok := i.words.Get(token.Term)
+		var cpt uint32
+		if ok {
+			cpt = k.(uint32)
+		} else {
+			cpt = 0
+		}
+		fmt.Println(token.Term, cpt)
+		seq.Write(encode(cpt))
+	}
+	return seq.Bytes(), nil
+}
