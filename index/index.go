@@ -1,6 +1,7 @@
 package index
 
 import (
+	"bytes"
 	"encoding/binary"
 	"errors"
 	"fmt"
@@ -51,8 +52,10 @@ func New() (*Index, error) {
 
 }
 
-func (i *Index) WatchFor(sequence []byte) error {
-	for _, token := range i.tokenizer.Tokenize(sequence) {
+func (i *Index) WatchFor(sequence []byte) (uint32, error) {
+	tokens := i.tokenizer.Tokenize(sequence)
+	var seq bytes.Buffer
+	for _, token := range tokens {
 		k, ok := i.words.Get(token.Term)
 		var cpt uint32
 		if ok {
@@ -63,6 +66,17 @@ func (i *Index) WatchFor(sequence []byte) error {
 			i.words, _, ok = i.words.Insert(token.Term, cpt)
 		}
 		fmt.Println(token.Term, cpt)
+		seq.Write(encode(cpt))
 	}
-	return nil
+	fmt.Println(seq.Bytes())
+	k, ok := i.sequences.Get(seq.Bytes())
+	var ks uint32
+	if ok {
+		ks = k.(uint32)
+	} else {
+		i.cpt_seq += 1
+		ks = i.cpt_seq
+	}
+
+	return ks, nil
 }

@@ -21,7 +21,7 @@ func TestWatchFor(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	err = i.WatchFor([]byte("pim pam poum pim"))
+	_, err = i.WatchFor([]byte("pim pam poum pim"))
 	if err != nil {
 		t.Error(err)
 	}
