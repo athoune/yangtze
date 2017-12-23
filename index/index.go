@@ -3,6 +3,10 @@ package index
 import (
 	"encoding/binary"
 	"errors"
+	"fmt"
+	"github.com/blevesearch/bleve/analysis"
+	"github.com/blevesearch/bleve/analysis/tokenizers/whitespace_tokenizer"
+	"github.com/blevesearch/bleve/registry"
 	radix "github.com/hashicorp/go-immutable-radix"
 )
 
@@ -26,16 +30,29 @@ func decode(in []byte) (uint32, error) {
 type Index struct {
 	words     *radix.Tree
 	sequences *radix.Tree
+	cpt       uint32
+	tokenizer analysis.Tokenizer
+	cache     *registry.Cache
 }
 
 func New() (*Index, error) {
+	cache := registry.NewCache()
+	tokenizer, err := whitespace_tokenizer.TokenizerConstructor(nil, cache)
+	if err != nil {
+		return nil, err
+	}
 	return &Index{
 		words:     radix.New(),
 		sequences: radix.New(),
+		cache:     cache,
+		tokenizer: tokenizer,
 	}, nil
 
 }
 
-func (i *Index) WatchFor(sequence string) error {
+func (i *Index) WatchFor(sequence []byte) error {
+	for _, token := range i.tokenizer.Tokenize(sequence) {
+		fmt.Println(token)
+	}
 	return nil
 }

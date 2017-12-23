@@ -15,3 +15,14 @@ func TestEncodeDecode(t *testing.T) {
 		t.Error("Oups", aa, a)
 	}
 }
+
+func TestWatchFor(t *testing.T) {
+	i, err := New()
+	if err != nil {
+		t.Error(err)
+	}
+	err = i.WatchFor([]byte("pim pam poum"))
+	if err != nil {
+		t.Error(err)
+	}
+}
