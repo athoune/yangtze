@@ -1,5 +1,5 @@
-Yangtze
-=======
+Yangtze (长江 Yángzǐ Jiāng)
+===========================
 
 Watch for text pattern using tokens and radix tree.
 
