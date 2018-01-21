@@ -2,31 +2,13 @@ package index
 
 import (
 	"bytes"
-	"encoding/binary"
-	"errors"
 	"fmt"
+	"github.com/athoune/yangtze/serialize"
 	"github.com/blevesearch/bleve/analysis"
 	"github.com/blevesearch/bleve/analysis/tokenizers/whitespace_tokenizer"
 	"github.com/blevesearch/bleve/registry"
 	radix "github.com/hashicorp/go-immutable-radix"
 )
-
-func encode(in uint32) []byte {
-	buf := make([]byte, binary.MaxVarintLen32)
-	binary.PutUvarint(buf, uint64(in))
-	return buf
-}
-
-func decode(in []byte) (uint32, error) {
-	r, e := binary.Uvarint(in)
-	if e == 0 {
-		return 0, errors.New("buff too small")
-	}
-	if e < 0 {
-		return 0, errors.New("buffer overflow")
-	}
-	return uint32(r), nil
-}
 
 type Index struct {
 	words     *radix.Tree
@@ -66,7 +48,7 @@ func (i *Index) WatchFor(sequence []byte) (uint32, error) {
 			i.words, _, ok = i.words.Insert(token.Term, cpt)
 		}
 		fmt.Println(token.Term, cpt)
-		seq.Write(encode(cpt))
+		seq.Write(serialize.Encode(cpt))
 	}
 	fmt.Println(seq.Bytes())
 	k, ok := i.sequences.Get(seq.Bytes())
@@ -93,7 +75,7 @@ func (i *Index) Sequence(line []byte) ([]byte, error) {
 			cpt = 0
 		}
 		fmt.Println(token.Term, cpt)
-		seq.Write(encode(cpt))
+		seq.Write(serialize.Encode(cpt))
 	}
 	return seq.Bytes(), nil
 }
