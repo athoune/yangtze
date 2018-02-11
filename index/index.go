@@ -34,6 +34,10 @@ func New() (*Index, error) {
 
 }
 
+/*
+Index a sequence of tokens
+Returns sequence id and potential error
+*/
 func (i *Index) WatchFor(sequence []byte) (uint32, error) {
 	tokens := i.tokenizer.Tokenize(sequence)
 	var seq bytes.Buffer
@@ -63,6 +67,10 @@ func (i *Index) WatchFor(sequence []byte) (uint32, error) {
 	return ks, nil
 }
 
+/*
+Transform a sequence of tokens (a line of logs), in a collection of token id, as bytes.
+
+*/
 func (i *Index) Sequence(line []byte) ([]byte, error) {
 	tokens := i.tokenizer.Tokenize(line)
 	var seq bytes.Buffer
