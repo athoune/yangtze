@@ -12,6 +12,6 @@ func TestSerialize(t *testing.T) {
 		t.Error(err)
 	}
 	if aa != a {
-		t.Errorf("Oups, %i != %i", aa, a)
+		t.Errorf("Oups, %d != %d", aa, a)
 	}
 }
