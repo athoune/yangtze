@@ -5,18 +5,20 @@
   name = "github.com/blevesearch/bleve"
   packages = [
     "analysis",
-    "analysis/tokenizers/character",
-    "analysis/tokenizers/whitespace_tokenizer",
+    "analysis/tokenizer/character",
+    "analysis/tokenizer/regexp",
+    "analysis/tokenizer/whitespace",
     "document",
+    "geo",
     "index",
     "index/store",
-    "numeric_util",
+    "numeric",
     "registry",
     "search",
     "search/highlight"
   ]
-  revision = "97393d027342f43b17da2f02c090a4e728ac929f"
-  version = "v0.5.0"
+  revision = "0456569b6240ce13fc7bfed00e10b3f99e68a3e2"
+  version = "v0.6.0"
 
 [[projects]]
   branch = "master"
@@ -39,6 +41,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "4324d3ce9624b37709530a617f71497fc89d8601e55a218f3d06e2fd36554b3c"
+  inputs-digest = "ead22b65d2391d26e25ee0e6e9c226878e91edb360c024de25eb6e50667fc329"
   solver-name = "gps-cdcl"
   solver-version = 1

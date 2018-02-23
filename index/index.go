@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/athoune/yangtze/serialize"
 	"github.com/blevesearch/bleve/analysis"
-	"github.com/blevesearch/bleve/analysis/tokenizers/whitespace_tokenizer"
+	"github.com/blevesearch/bleve/analysis/tokenizer/whitespace"
 	"github.com/blevesearch/bleve/registry"
 	radix "github.com/hashicorp/go-immutable-radix"
 )
@@ -21,7 +21,7 @@ type Index struct {
 
 func New() (*Index, error) {
 	cache := registry.NewCache()
-	tokenizer, err := whitespace_tokenizer.TokenizerConstructor(nil, cache)
+	tokenizer, err := whitespace.TokenizerConstructor(nil, cache)
 	if err != nil {
 		return nil, err
 	}
