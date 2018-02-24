@@ -50,6 +50,7 @@ func Parse(src string) (*Sentence, error) {
 		t := NewToken(string(tok.Term), tok.Start)
 		fmt.Println(t)
 		s.Tokens = append(s.Tokens, t)
+		s.HasStartsWith = s.HasStartsWith || t.StartsWith
 	}
 
 	return &s, nil
