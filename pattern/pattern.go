@@ -2,8 +2,8 @@ package pattern
 
 import (
 	"fmt"
-	"github.com/blevesearch/bleve/analysis/tokenizer/regexp"
-	_regexp "regexp"
+	"github.com/blevesearch/bleve/analysis/tokenizer/whitespace"
+	"strings"
 )
 
 type Kind int
@@ -27,23 +27,29 @@ type Token struct {
 	StartsWith bool // *
 }
 
-type Pattern struct {
+func NewToken(value string, position int) *Token {
+	s := strings.HasSuffix(value, "*")
+	if s {
+		value = value[0 : len(value)-1]
+	}
+	return &Token{
+		Value:      value,
+		Position:   position,
+		StartsWith: s,
+	}
 }
 
 func Parse(src string) (*Sentence, error) {
-	tokenizer := regexp.NewRegexpTokenizer(_regexp.MustCompile("\\S+"))
+	tokenizer, _ := whitespace.TokenizerConstructor(nil, nil)
 
 	s := Sentence{
 		Tokens:        make([]*Token, 1),
 		HasStartsWith: false,
 	}
 	for _, tok := range tokenizer.Tokenize([]byte(src)) {
-		token := Token{
-			Value:    string(tok.Term),
-			Position: tok.Start,
-		}
-		fmt.Println(token)
-		s.Tokens = append(s.Tokens, &token)
+		t := NewToken(string(tok.Term), tok.Start)
+		fmt.Println(t)
+		s.Tokens = append(s.Tokens, t)
 	}
 
 	return &s, nil

@@ -5,5 +5,5 @@ import (
 )
 
 func TestParse(t *testing.T) {
-	Parse("sudo pam_unix ... session opened for user ")
+	Parse("sudo pam_unix ... session opened for user*")
 }
