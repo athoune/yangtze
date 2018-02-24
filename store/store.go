@@ -2,11 +2,13 @@ package store
 
 import (
 	radix "github.com/hashicorp/go-immutable-radix"
+	"sync"
 )
 
 type Store struct {
 	words    *radix.Tree
 	cpt_word uint32
+	mux      sync.Mutex
 }
 
 func New() *Store {
@@ -17,13 +19,12 @@ func New() *Store {
 
 func (s *Store) Word(word []byte) uint32 {
 	k, ok := s.words.Get(word)
-	var cpt uint32
 	if ok {
-		cpt = k.(uint32)
-	} else {
-		s.cpt_word += 1
-		cpt = s.cpt_word
-		s.words, _, ok = s.words.Insert(word, cpt)
+		return k.(uint32)
 	}
-	return cpt
+	s.mux.Lock()
+	defer s.mux.Unlock()
+	s.cpt_word += 1
+	s.words, _, _ = s.words.Insert(word, s.cpt_word)
+	return s.cpt_word
 }
