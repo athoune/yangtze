@@ -5,8 +5,10 @@
   name = "github.com/blevesearch/bleve"
   packages = [
     "analysis",
+    "analysis/analyzer/simple",
+    "analysis/token/lowercase",
     "analysis/tokenizer/character",
-    "analysis/tokenizer/regexp",
+    "analysis/tokenizer/letter",
     "analysis/tokenizer/whitespace",
     "document",
     "geo",
@@ -21,6 +23,12 @@
   version = "v0.6.0"
 
 [[projects]]
+  name = "github.com/davecgh/go-spew"
+  packages = ["spew"]
+  revision = "346938d642f2ec3594ed81d874461961cd0faa76"
+  version = "v1.1.0"
+
+[[projects]]
   branch = "master"
   name = "github.com/hashicorp/go-immutable-radix"
   packages = ["."]
@@ -33,6 +41,18 @@
   revision = "0fb14efe8c47ae851c0034ed7a448854d3d34cf3"
 
 [[projects]]
+  name = "github.com/pmezard/go-difflib"
+  packages = ["difflib"]
+  revision = "792786c7400a136282c1664665ae0a8db921c6c2"
+  version = "v1.0.0"
+
+[[projects]]
+  name = "github.com/stretchr/testify"
+  packages = ["assert"]
+  revision = "12b6f73e6084dad08a7c6e575284b177ecafbc71"
+  version = "v1.2.1"
+
+[[projects]]
   branch = "master"
   name = "golang.org/x/net"
   packages = ["context"]
@@ -41,6 +61,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "ead22b65d2391d26e25ee0e6e9c226878e91edb360c024de25eb6e50667fc329"
+  inputs-digest = "1ac068579026756d8fc7b0deac15253f123bd09a998a7698dbee00adafa0d0b3"
   solver-name = "gps-cdcl"
   solver-version = 1
