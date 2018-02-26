@@ -5,6 +5,7 @@ import (
 	"github.com/blevesearch/bleve/analysis/analyzer/simple"
 	"github.com/blevesearch/bleve/registry"
 	radix "github.com/hashicorp/go-immutable-radix"
+	"sort"
 	"sync"
 )
 
@@ -70,4 +71,21 @@ func (s *Store) Sentence(sentence []byte) []uint32 {
 		r[i] = s.Word(token.Term)
 	}
 	return r
+}
+
+// Sorted set without 0
+func Set(words []uint32) []uint32 {
+	sort.Slice(words, func(i, j int) bool { return words[i] < words[j] })
+	clean := []uint32{words[0]}
+	last := words[0]
+	for _, v := range words[1:len(words)] {
+		if v != last {
+			clean = append(clean, v)
+			last = v
+		}
+	}
+	if clean[0] == 0 {
+		return clean[1:len(clean)]
+	}
+	return clean
 }

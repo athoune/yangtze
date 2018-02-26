@@ -17,4 +17,5 @@ func TestStore(t *testing.T) {
 	assert.Equal(t, a1, aa1)
 	r := s.Sentence([]byte("Pam, Pim, Poum and the captain"))
 	assert.Equal(t, r, []uint32{2, 1, 3, 0, 0, 0})
+	assert.Equal(t, Set(r), []uint32{1, 2, 3})
 }
