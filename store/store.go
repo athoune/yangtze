@@ -8,6 +8,8 @@ import (
 	"sync"
 )
 
+const Nothing = Word(0)
+
 type Store struct {
 	Words    *radix.Tree
 	analyzer *analysis.Analyzer
