@@ -1,7 +1,6 @@
 package pattern
 
 import (
-	"fmt"
 	"github.com/blevesearch/bleve/analysis/tokenizer/whitespace"
 	"strings"
 )
@@ -48,7 +47,6 @@ func Parse(src string) (*Sentence, error) {
 	}
 	for _, tok := range tokenizer.Tokenize([]byte(src)) {
 		t := NewToken(string(tok.Term), tok.Start)
-		fmt.Println(t)
 		s.Tokens = append(s.Tokens, t)
 		s.HasStartsWith = s.HasStartsWith || t.StartsWith
 	}
