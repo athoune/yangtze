@@ -96,11 +96,17 @@ func (s Set) Contains(other Set) bool {
 	if len(other) > len(s) {
 		return false
 	}
+	start := 0
 	for _, o := range other {
 		ok := false
-		for _, a := range s {
+		for i, a := range s[start:len(s)] {
 			if a == o {
 				ok = true
+				start = i
+				break
+			}
+			if a > o {
+				return false
 			}
 		}
 		if !ok {
