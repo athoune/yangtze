@@ -34,38 +34,42 @@ func NewSimple() *Store {
 	}
 }
 
-func (s *Store) AddWord(word []byte) uint32 {
+type Word uint32
+
+func (s *Store) AddWord(word []byte) Word {
 	k, ok := s.Words.Get(word)
 	if ok {
-		return k.(uint32)
+		return k.(Word)
 	}
 	s.mux.Lock()
 	defer s.mux.Unlock()
 	s.cpt_word += 1
-	s.Words, _, _ = s.Words.Insert(word, s.cpt_word)
-	return s.cpt_word
+	s.Words, _, _ = s.Words.Insert(word, Word(s.cpt_word))
+	return Word(s.cpt_word)
 }
 
-func (s *Store) Word(word []byte) uint32 {
+func (s *Store) Word(word []byte) Word {
 	k, ok := s.Words.Get(word)
 	if ok {
-		return k.(uint32)
+		return k.(Word)
 	}
 	return 0
 }
 
-func (s *Store) AddSentence(sentence []byte) []uint32 {
+type Sentence []Word
+
+func (s *Store) AddSentence(sentence []byte) Sentence {
 	tokens := s.analyzer.Analyze(sentence)
-	r := make([]uint32, len(tokens))
+	r := make(Sentence, len(tokens))
 	for i, token := range tokens {
 		r[i] = s.AddWord(token.Term)
 	}
 	return r
 }
 
-func (s *Store) Sentence(sentence []byte) []uint32 {
+func (s *Store) Sentence(sentence []byte) Sentence {
 	tokens := s.analyzer.Analyze(sentence)
-	r := make([]uint32, len(tokens))
+	r := make(Sentence, len(tokens))
 	for i, token := range tokens {
 		r[i] = s.Word(token.Term)
 	}
