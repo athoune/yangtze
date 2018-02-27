@@ -17,12 +17,4 @@ func TestStore(t *testing.T) {
 	assert.Equal(t, a1, aa1)
 	r := s.Sentence([]byte("Pam, Pim, Poum and the captain"))
 	assert.Equal(t, r, []uint32{2, 1, 3, 0, 0, 0})
-	set := NewSet(r)
-	assert.Equal(t, set, Set{1, 2, 3})
-	assert.True(t, set.Contains(Set{1, 2, 3}))
-	assert.True(t, set.Contains(Set{1, 2}))
-	assert.True(t, set.Contains(Set{2, 3}))
-	assert.True(t, set.Contains(Set{1, 3}))
-	assert.False(t, set.Contains(Set{1, 4}))
-	assert.False(t, set.Contains(Set{1, 2, 3, 4}))
 }
