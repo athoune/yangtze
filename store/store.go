@@ -73,8 +73,10 @@ func (s *Store) Sentence(sentence []byte) []uint32 {
 	return r
 }
 
+type Set []uint32
+
 // Sorted set without 0
-func Set(words []uint32) []uint32 {
+func NewSet(words []uint32) Set {
 	sort.Slice(words, func(i, j int) bool { return words[i] < words[j] })
 	clean := []uint32{words[0]}
 	last := words[0]
@@ -88,4 +90,22 @@ func Set(words []uint32) []uint32 {
 		return clean[1:len(clean)]
 	}
 	return clean
+}
+
+func (s Set) Contains(other Set) bool {
+	if len(other) > len(s) {
+		return false
+	}
+	for _, o := range other {
+		ok := false
+		for _, a := range s {
+			if a == o {
+				ok = true
+			}
+		}
+		if !ok {
+			return false
+		}
+	}
+	return true
 }
