@@ -1,12 +1,13 @@
 package set
 
 import (
+	"github.com/athoune/yangtze/store"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
 func TestSet(t *testing.T) {
-	set := NewSet([]uint32{2, 1, 3, 0, 0, 0})
+	set := NewSet(store.Sentence{2, 1, 3, 0, 0, 0})
 	assert.Equal(t, set, Set{1, 2, 3})
 	assert.True(t, set.Contains(Set{1, 2, 3}))
 	assert.True(t, set.Contains(Set{1, 2}))

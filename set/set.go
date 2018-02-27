@@ -1,19 +1,20 @@
 package set
 
 import (
+	"github.com/athoune/yangtze/store"
 	"sort"
 )
 
 type Set []uint32
 
 // Sorted set without 0
-func NewSet(words []uint32) Set {
+func NewSet(words store.Sentence) Set {
 	sort.Slice(words, func(i, j int) bool { return words[i] < words[j] })
-	clean := []uint32{words[0]}
+	clean := []uint32{uint32(words[0])}
 	last := words[0]
 	for _, v := range words[1:len(words)] {
 		if v != last {
-			clean = append(clean, v)
+			clean = append(clean, uint32(v))
 			last = v
 		}
 	}
