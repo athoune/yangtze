@@ -1,6 +1,7 @@
 package pattern
 
 import (
+	"github.com/athoune/yangtze/store"
 	"github.com/blevesearch/bleve/analysis/tokenizer/whitespace"
 	"strings"
 )
@@ -8,13 +9,14 @@ import (
 type Kind int
 
 const (
-	Include Kind = iota
+	JustAToken Kind = iota
+	Include
 	Exclude
 	Star     // .
 	AllStars // ...
 )
 
-type Sentence struct {
+type Pattern struct {
 	Tokens        []*Token
 	HasStartsWith bool
 }
@@ -32,16 +34,17 @@ func NewToken(value string, position int) *Token {
 		value = value[0 : len(value)-1]
 	}
 	return &Token{
+		Kind:       JustAToken,
 		Value:      value,
 		Position:   position,
 		StartsWith: s,
 	}
 }
 
-func Parse(src string) (*Sentence, error) {
+func Parse(src string) (*Pattern, error) {
 	tokenizer, _ := whitespace.TokenizerConstructor(nil, nil)
 
-	s := Sentence{
+	s := Pattern{
 		Tokens:        make([]*Token, 1),
 		HasStartsWith: false,
 	}
@@ -52,4 +55,17 @@ func Parse(src string) (*Sentence, error) {
 	}
 
 	return &s, nil
+}
+
+func (p *Pattern) Sentence(s *Store) *store.Sentence {
+	sentences := make(store.Sentence, len(p.Tokens))
+	for i, t := range p.Tokens {
+		if t.Kind == JustAToken {
+			w := s.AddWord([]byte(t.Value))
+			sentences[i] = w
+		} else {
+			sentences[i] = 0
+		}
+	}
+	return &sentences
 }
