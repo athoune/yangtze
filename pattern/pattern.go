@@ -67,7 +67,7 @@ func Parse(src string) (*Pattern, error) {
 	return &s, nil
 }
 
-func (p *Pattern) Sentence(s *store.Store) *store.Sentence {
+func (p *Pattern) Sentence(s *store.Store) store.Sentence {
 	sentences := make(store.Sentence, len(p.Tokens))
 	for i, t := range p.Tokens {
 		if t.Kind == JustAToken {
@@ -77,5 +77,5 @@ func (p *Pattern) Sentence(s *store.Store) *store.Sentence {
 			sentences[i] = 0
 		}
 	}
-	return &sentences
+	return sentences
 }
