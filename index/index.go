@@ -46,7 +46,27 @@ func (i *Index) AddPattern(p *pattern.Pattern) {
 	}
 }
 
-func (i *Index) ReadLine(line []byte) {
-	s := i.store.Sentence(line)
-	fmt.Println(s)
+func (i *Index) ReadLine(line []byte) ([]*pattern.Pattern, bool) {
+	patterns := make([]*pattern.Pattern, 0)
+	sentence := i.store.Sentence(line)
+	uniq := make(map[int]bool)
+	for _, word := range sentence {
+		if word != store.Nothing {
+			for _, ps := range i.inverse[word] {
+				fmt.Println(ps)
+				uniq[ps] = true
+			}
+		}
+	}
+	if len(uniq) == 0 {
+		return patterns, false
+	}
+	fmt.Println("uniq", uniq)
+	for p, _ := range uniq {
+		pp := i.patterns[p-1]
+		if pp.Match(sentence) {
+			patterns = append(patterns, pp)
+		}
+	}
+	return patterns, len(patterns) > 0
 }

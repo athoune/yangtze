@@ -79,3 +79,7 @@ func (p *Pattern) Sentence(s *store.Store) store.Sentence {
 	}
 	return sentences
 }
+
+func (p *Pattern) Match(sentence store.Sentence) bool {
+	return false
+}

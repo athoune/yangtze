@@ -1,7 +1,6 @@
 package index
 
 import (
-	"fmt"
 	"github.com/athoune/yangtze/pattern"
 	"github.com/stretchr/testify/assert"
 	"testing"
@@ -13,5 +12,8 @@ func TestWatchFor(t *testing.T) {
 	p, err := pattern.Parse("beuha ... aussi")
 	assert.Nil(t, err)
 	i.AddPattern(p)
-	fmt.Println(i)
+	_, ok := i.ReadLine([]byte("Rien à voir"))
+	assert.False(t, ok)
+	_, ok = i.ReadLine([]byte("Aussi super beuha"))
+	assert.False(t, ok)
 }
