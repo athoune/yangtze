@@ -2,6 +2,7 @@ package pattern
 
 import (
 	"github.com/athoune/yangtze/store"
+	"github.com/blevesearch/bleve/analysis"
 	"github.com/blevesearch/bleve/analysis/tokenizer/whitespace"
 	"strings"
 )
@@ -10,10 +11,8 @@ type Kind int
 
 const (
 	JustAToken Kind = iota
-	Include
-	Exclude
-	Star     // .
-	AllStars // ...
+	Star            // .
+	AllStars        // ...
 )
 
 type Pattern struct {
@@ -21,11 +20,25 @@ type Pattern struct {
 	HasStartsWith bool
 }
 
+type Parser struct {
+	tokenizer analysis.Tokenizer
+	store     *store.Store
+}
+
+func NewParser(s *store.Store) *Parser {
+	tokenizer, _ := whitespace.TokenizerConstructor(nil, nil)
+	return &Parser{
+		tokenizer: tokenizer,
+		store:     s,
+	}
+}
+
 type Token struct {
 	Value      string
 	Kind       Kind
 	Position   int
 	StartsWith bool // *
+	Word       store.Word
 }
 
 func NewToken(value string, position int) *Token {
@@ -50,16 +63,17 @@ func NewToken(value string, position int) *Token {
 	}
 }
 
-func Parse(src string) (*Pattern, error) {
-	tokenizer, _ := whitespace.TokenizerConstructor(nil, nil)
-
-	tokens := tokenizer.Tokenize([]byte(src))
+func (p *Parser) Parse(src string) (*Pattern, error) {
+	tokens := p.tokenizer.Tokenize([]byte(src))
 	s := Pattern{
 		Tokens:        make([]*Token, len(tokens)),
 		HasStartsWith: false,
 	}
 	for i, tok := range tokens {
 		t := NewToken(string(tok.Term), tok.Start)
+		if t.Kind == JustAToken && p.store != nil {
+			t.Word = p.store.AddWord([]byte(t.Value))
+		}
 		s.Tokens[i] = t
 		s.HasStartsWith = s.HasStartsWith || t.StartsWith
 	}
@@ -67,12 +81,11 @@ func Parse(src string) (*Pattern, error) {
 	return &s, nil
 }
 
-func (p *Pattern) Sentence(s *store.Store) store.Sentence {
+func (p *Pattern) Sentence() store.Sentence {
 	sentences := make(store.Sentence, len(p.Tokens))
 	for i, t := range p.Tokens {
 		if t.Kind == JustAToken {
-			w := s.AddWord([]byte(t.Value))
-			sentences[i] = w
+			sentences[i] = t.Word
 		} else {
 			sentences[i] = 0
 		}
