@@ -92,5 +92,21 @@ func (p *Parser) Parse(src string) (*Pattern, error) {
 }
 
 func (p *Pattern) Match(sentence store.Sentence) bool {
+	start := 0
+	for _, tok := range p.Tokens {
+		switch tok.Kind {
+		case Star:
+			start += 1
+		case JustAToken:
+			idx := sentence[start:len(sentence)].Index(tok.Sentence)
+			if idx == -1 {
+				return false
+			}
+			start += len(tok.Sentence) + idx
+			if start == len(sentence) {
+				return true
+			}
+		}
+	}
 	return false
 }

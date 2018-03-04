@@ -7,7 +7,6 @@ import (
 )
 
 func TestParse(t *testing.T) {
-
 	s := store.NewSimple()
 	parser := NewParser(s)
 	p, err := parser.Parse("sudo pam_unix ... session opened for user*")
@@ -19,4 +18,12 @@ func TestParse(t *testing.T) {
 	assert.Equal(t, 2, len(p.Tokens[0].Sentence))
 	assert.Equal(t, 0, len(p.Tokens[1].Sentence))
 	assert.Equal(t, 4, len(p.Tokens[2].Sentence))
+}
+
+func TestMatch(t *testing.T) {
+	s := store.NewSimple()
+	parser := NewParser(s)
+	p, err := parser.Parse("a b . d")
+	assert.Nil(t, err)
+	assert.True(t, p.Match(s.Sentence([]byte("a b c d"))))
 }
