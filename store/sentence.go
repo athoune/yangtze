@@ -21,7 +21,7 @@ func (s *Store) Sentence(sentence []byte) Sentence {
 }
 
 func (s Sentence) Index(substr Sentence) int {
-	if len(substr) > len(s) {
+	if len(substr) == 0 || len(s) == 0 || len(substr) > len(s) {
 		return -1
 	}
 	i2 := 0
