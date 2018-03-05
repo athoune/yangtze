@@ -12,4 +12,5 @@ func TestSentence(t *testing.T) {
 	s3 := Sentence{5, 6}
 	assert.Equal(t, -1, s1.Index(s3))
 	assert.Equal(t, -1, s2.Index(s1))
+	assert.Equal(t, 0, s1.Index(Sentence{1}))
 }
