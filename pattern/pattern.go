@@ -118,3 +118,13 @@ func (p *Pattern) Match(sentence store.Sentence) bool {
 	}
 	return false
 }
+
+func (p *Pattern) Sentence() store.Sentence {
+	s := make(store.Sentence, 0)
+	for _, tok := range p.Tokens {
+		for _, ss := range tok.Sentence {
+			s = append(s, ss)
+		}
+	}
+	return s
+}
