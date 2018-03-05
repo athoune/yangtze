@@ -31,6 +31,10 @@ func NewSimple() (*Index, error) {
 	}, nil
 }
 
+func (i *Index) Parser() *pattern.Parser {
+	return pattern.NewParser(i.store)
+}
+
 func (i *Index) AddPattern(p *pattern.Pattern) {
 	i.mux.Lock()
 	defer i.mux.Unlock()
