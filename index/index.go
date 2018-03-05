@@ -1,7 +1,6 @@
 package index
 
 import (
-	"fmt"
 	"github.com/athoune/yangtze/pattern"
 	"github.com/athoune/yangtze/store"
 	"github.com/blevesearch/bleve/analysis"
@@ -57,7 +56,6 @@ func (i *Index) ReadLine(line []byte) ([]*pattern.Pattern, bool) {
 	for _, word := range sentence {
 		if word != store.Nothing {
 			for _, ps := range i.inverse[word] {
-				fmt.Println(ps)
 				uniq[ps] = true
 			}
 		}
@@ -65,7 +63,6 @@ func (i *Index) ReadLine(line []byte) ([]*pattern.Pattern, bool) {
 	if len(uniq) == 0 {
 		return patterns, false
 	}
-	fmt.Println("uniq", uniq)
 	for p, _ := range uniq {
 		pp := i.patterns[p-1]
 		if pp.Match(sentence) {
