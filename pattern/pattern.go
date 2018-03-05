@@ -94,7 +94,7 @@ func (p *Parser) Parse(src string) (*Pattern, error) {
 func (p *Pattern) Match(sentence store.Sentence) bool {
 	start := 0
 	mode := AllStars
-	for _, tok := range p.Tokens {
+	for i, tok := range p.Tokens {
 		switch tok.Kind {
 		case Star:
 			start += 1
@@ -110,7 +110,7 @@ func (p *Pattern) Match(sentence store.Sentence) bool {
 				return false
 			}
 			start += len(tok.Sentence) + idx
-			if start == len(sentence) {
+			if start == len(sentence) && (i+1) == len(p.Tokens) {
 				return true
 			}
 		}

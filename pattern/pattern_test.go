@@ -37,3 +37,11 @@ func TestMatch(t *testing.T) {
 	assert.True(t, p.Match(s.Sentence([]byte("a b d"))))
 	assert.False(t, p.Match(s.Sentence([]byte("a b a b d"))))
 }
+
+func TestMoreMatch(t *testing.T) {
+	s := store.NewSimple()
+	parser := NewParser(s)
+	p, err := parser.Parse("beuha ... aussi")
+	assert.Nil(t, err)
+	assert.False(t, p.Match(s.Sentence([]byte("Aussi super beuha"))))
+}
