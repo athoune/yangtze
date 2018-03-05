@@ -16,3 +16,23 @@ func TestWatchFor(t *testing.T) {
 	_, ok = i.ReadLine([]byte("Aussi super beuha"))
 	assert.False(t, ok)
 }
+
+func BenchmarkIndex(b *testing.B) {
+	idx, err := NewSimple()
+	if err != nil {
+		panic(err)
+	}
+	p, err := idx.Parser().Parse("beuha ... aussi")
+	if err != nil {
+		panic(err)
+	}
+	idx.AddPattern(p)
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		if i%10 <= 8 {
+			_, _ = idx.ReadLine([]byte("Rien à voir"))
+		} else {
+			_, _ = idx.ReadLine([]byte("Beuha super aussi"))
+		}
+	}
+}
