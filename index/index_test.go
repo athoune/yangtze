@@ -6,7 +6,6 @@ import (
 	"github.com/stretchr/testify/assert"
 	"io"
 	"regexp"
-	"strings"
 	"testing"
 )
 
@@ -104,9 +103,9 @@ func BenchmarkRegexp(b *testing.B) {
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		if i%10 <= 8 {
-			r.MatchString(strings.ToLower("Rien à voir"))
+			r.MatchString("Rien à voir")
 		} else {
-			r.MatchString(strings.ToLower("beuha super aussi"))
+			r.MatchString("beuha super aussi")
 		}
 	}
 }
