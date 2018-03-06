@@ -8,7 +8,7 @@ import (
 
 func TestToken(t *testing.T) {
 	tok := NewSimpleTokenizer()
-	tokens := tok.Split([]byte("Beuha  aussi 42 "))
+	tokens := tok.Split([]byte("Beuha  aussi 42. "))
 	assert.Equal(t, 3, len(tokens))
 	assert.Equal(t, []byte("Beuha"), tokens[0])
 	assert.Equal(t, []byte("aussi"), tokens[1])
