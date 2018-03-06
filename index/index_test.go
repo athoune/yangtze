@@ -36,7 +36,7 @@ func BenchmarkIndex(b *testing.B) {
 		if i%10 <= 8 {
 			_, _ = idx.ReadLine([]byte("Rien à voir"))
 		} else {
-			_, _ = idx.ReadLine([]byte("Beuha super aussi"))
+			_, _ = idx.ReadLine([]byte("beuha super aussi"))
 		}
 	}
 }
@@ -48,7 +48,7 @@ func BenchmarkToken(b *testing.B) {
 		if i%10 <= 8 {
 			t.Split([]byte("Rien à voir"))
 		} else {
-			t.Split([]byte("Beuha super aussi"))
+			t.Split([]byte("beuha super aussi"))
 		}
 	}
 }
@@ -62,7 +62,7 @@ func BenchmarkBuffer(b *testing.B) {
 			for _, err := b.Read(); err != io.EOF; _, err = b.Read() {
 			}
 		} else {
-			b := t.Tokenize([]byte("Beuha super aussi"))
+			b := t.Tokenize([]byte("beuha super aussi"))
 			for _, err := b.Read(); err != io.EOF; _, err = b.Read() {
 			}
 		}
@@ -71,12 +71,13 @@ func BenchmarkBuffer(b *testing.B) {
 
 func BenchmarkSentence(b *testing.B) {
 	idx, _ := NewSimple()
+	idx.Parser().Parse([]byte("beuha ... aussi"))
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		if i%10 <= 8 {
 			idx.store.Sentence([]byte("Rien à voir"))
 		} else {
-			idx.store.Sentence([]byte("Beuha super aussi"))
+			idx.store.Sentence([]byte("beuha super aussi"))
 		}
 	}
 }
@@ -85,7 +86,7 @@ func BenchmarkMatch(b *testing.B) {
 
 	idx, _ := NewSimple()
 	s1 := idx.store.Sentence([]byte("Rien à voir"))
-	s2 := idx.store.Sentence([]byte("Beuha super aussi"))
+	s2 := idx.store.Sentence([]byte("beuha super aussi"))
 	p, _ := idx.Parser().Parse([]byte("beuha ... aussi"))
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
@@ -105,7 +106,7 @@ func BenchmarkRegexp(b *testing.B) {
 		if i%10 <= 8 {
 			r.MatchString(strings.ToLower("Rien à voir"))
 		} else {
-			r.MatchString(strings.ToLower("Beuha super aussi"))
+			r.MatchString(strings.ToLower("beuha super aussi"))
 		}
 	}
 }
