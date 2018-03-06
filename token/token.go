@@ -44,7 +44,7 @@ func (b *Buffer) Read() ([]byte, error) {
 			last_is_letter = true
 		} else {
 			if last_is_letter {
-				r := b.bytes[b.prems : b.offset-1]
+				r := b.bytes[b.prems : b.offset-size]
 				b.prems = b.offset
 				return r, nil
 			}
@@ -66,7 +66,7 @@ func Split(input []byte) [][]byte {
 			last_is_letter = true
 		} else {
 			if last_is_letter {
-				out = append(out, input[prems:offset-1])
+				out = append(out, input[prems:offset-size])
 			}
 			last_is_letter = false
 			prems = offset
