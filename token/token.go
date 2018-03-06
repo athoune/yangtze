@@ -60,6 +60,12 @@ type Buffer struct {
 	prems  int
 }
 
+func (b *Buffer) Reset() {
+	b.buffer = bytes.NewBuffer(b.bytes)
+	b.prems = 0
+	b.offset = 0
+}
+
 func (b *Buffer) Read() ([]byte, error) {
 	if b.offset == len(b.bytes) {
 		return nil, io.EOF
