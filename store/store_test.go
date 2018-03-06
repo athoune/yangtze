@@ -15,6 +15,6 @@ func TestStore(t *testing.T) {
 	assert.Equal(t, a2, Word(2))
 	assert.Equal(t, a3, Word(3))
 	assert.Equal(t, a1, aa1)
-	r := s.Sentence([]byte("Pam, Pim, Poum and the captain"))
+	r := s.Sentence([]byte("pam, pim, poum and the captain"))
 	assert.Equal(t, r, Sentence{2, 1, 3, 0, 0, 0})
 }

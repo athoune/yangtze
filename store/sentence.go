@@ -1,21 +1,25 @@
 package store
 
+import (
+	"io"
+)
+
 type Sentence []Word
 
 func (s *Store) AddSentence(sentence []byte) Sentence {
-	tokens := s.Analyzer.Analyze(sentence)
-	r := make(Sentence, len(tokens))
-	for i, token := range tokens {
-		r[i] = s.AddWord(token.Term)
+	tokens := s.Tokenizer.Tokenize(sentence)
+	r := make(Sentence, 0)
+	for token, err := tokens.Read(); err != io.EOF; token, err = tokens.Read() {
+		r = append(r, s.AddWord(token))
 	}
 	return r
 }
 
 func (s *Store) Sentence(sentence []byte) Sentence {
-	tokens := s.Analyzer.Analyze(sentence)
-	r := make(Sentence, len(tokens))
-	for i, token := range tokens {
-		r[i] = s.Word(token.Term)
+	tokens := s.Tokenizer.Tokenize(sentence)
+	r := make(Sentence, 0)
+	for token, err := tokens.Read(); err != io.EOF; token, err = tokens.Read() {
+		r = append(r, s.Word(token))
 	}
 	return r
 }

@@ -1,9 +1,7 @@
 package store
 
 import (
-	"github.com/blevesearch/bleve/analysis"
-	"github.com/blevesearch/bleve/analysis/analyzer/simple"
-	"github.com/blevesearch/bleve/registry"
+	"github.com/athoune/yangtze/token"
 	radix "github.com/hashicorp/go-immutable-radix"
 	"sync"
 )
@@ -11,27 +9,15 @@ import (
 const Nothing = Word(0)
 
 type Store struct {
-	Words    *radix.Tree
-	Analyzer *analysis.Analyzer
-	cache    *registry.Cache
-	cpt_word uint32
-	mux      sync.Mutex
-}
-
-func New(analyzer *analysis.Analyzer) *Store {
-	return &Store{
-		Words:    radix.New(),
-		Analyzer: analyzer,
-		cache:    registry.NewCache(),
-	}
+	Words     *radix.Tree
+	cpt_word  uint32
+	Tokenizer token.Tokenizer
+	mux       sync.Mutex
 }
 
 func NewSimple() *Store {
-	cache := registry.NewCache()
-	analyzer, _ := simple.AnalyzerConstructor(nil, cache)
 	return &Store{
-		Words:    radix.New(),
-		Analyzer: analyzer,
-		cache:    cache,
+		Words:     radix.New(),
+		Tokenizer: token.NewSimpleTokenizer(),
 	}
 }
