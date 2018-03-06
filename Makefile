@@ -9,6 +9,9 @@ test: vendor
 	go test -v -cover github.com/athoune/yangtze/store
 	go test -v -cover github.com/athoune/yangtze/token
 
+bench: vendor
+	cd index && go test -v -bench . -benchmem
+
 vendor:
 	dep ensure
 
