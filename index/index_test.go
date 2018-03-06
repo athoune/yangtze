@@ -1,6 +1,7 @@
 package index
 
 import (
+	"github.com/athoune/yangtze/store"
 	"github.com/athoune/yangtze/token"
 	"github.com/stretchr/testify/assert"
 	"io"
@@ -107,6 +108,24 @@ func BenchmarkRegexp(b *testing.B) {
 			r.MatchString(strings.ToLower("Rien à voir"))
 		} else {
 			r.MatchString(strings.ToLower("beuha super aussi"))
+		}
+	}
+}
+
+func BenchmarkWord(b *testing.B) {
+	s := store.NewSimple()
+	s.AddWord([]byte("beuha"))
+	s.AddWord([]byte("aussi"))
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		if i%10 <= 8 {
+			s.Word([]byte("Rien"))
+			s.Word([]byte("à"))
+			s.Word([]byte("voir"))
+		} else {
+			s.Word([]byte("beuha"))
+			s.Word([]byte("super"))
+			s.Word([]byte("aussi"))
 		}
 	}
 }
