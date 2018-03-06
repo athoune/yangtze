@@ -15,13 +15,21 @@ func (s *Store) AddSentence(sentence []byte) Sentence {
 	return r
 }
 
+const bufferSize = 64
+
 func (s *Store) Sentence(sentence []byte) Sentence {
 	tokens := s.Tokenizer.Tokenize(sentence)
-	r := make(Sentence, 0)
-	for token, err := tokens.Read(); err != io.EOF; token, err = tokens.Read() {
-		r = append(r, s.Word(token))
+	cpt := 0
+	r := make(Sentence, bufferSize)
+	for tok, err := tokens.Read(); err != io.EOF; tok, err = tokens.Read() {
+		if cpt < bufferSize {
+			r[cpt] = s.Word(tok)
+		} else {
+			r = append(r, s.Word(tok))
+		}
+		cpt += 1
 	}
-	return r
+	return r[:cpt]
 }
 
 func (s Sentence) Index(substr Sentence) int {
