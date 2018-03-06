@@ -1,6 +1,7 @@
 package index
 
 import (
+	"fmt"
 	"github.com/athoune/yangtze/store"
 	"github.com/athoune/yangtze/token"
 	"github.com/stretchr/testify/assert"
@@ -26,17 +27,19 @@ func BenchmarkIndex(b *testing.B) {
 	if err != nil {
 		panic(err)
 	}
-	p, err := idx.Parser().Parse([]byte("beuha ... aussi"))
-	if err != nil {
-		panic(err)
+	for i := 0; i < 100; i++ {
+		p, err := idx.Parser().Parse([]byte(fmt.Sprintf("beuha ... aussi%v", i)))
+		if err != nil {
+			panic(err)
+		}
+		idx.AddPattern(p)
 	}
-	idx.AddPattern(p)
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		if i%10 <= 8 {
 			_, _ = idx.ReadLine([]byte("Rien à voir"))
 		} else {
-			_, _ = idx.ReadLine([]byte("beuha super aussi"))
+			_, _ = idx.ReadLine([]byte("beuha super aussi42"))
 		}
 	}
 }
@@ -98,14 +101,20 @@ func BenchmarkMatch(b *testing.B) {
 }
 
 func BenchmarkRegexp(b *testing.B) {
-	r := regexp.MustCompile("beuha .* aussi")
-
+	r := make([]*regexp.Regexp, 100)
+	for i := 0; i < 100; i++ {
+		r[i] = regexp.MustCompile(fmt.Sprintf("beuha .* aussi%v", i))
+	}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		if i%10 <= 8 {
-			r.MatchString("Rien à voir")
+			for _, rr := range r {
+				rr.MatchString("Rien à voir")
+			}
 		} else {
-			r.MatchString("beuha super aussi")
+			for _, rr := range r {
+				rr.MatchString("beuha super aussi42")
+			}
 		}
 	}
 }
