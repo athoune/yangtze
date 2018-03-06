@@ -46,6 +46,12 @@ func NewSimpleTokenizer() Tokenizer {
 	}
 }
 
+func NewNotSpaceTokenizer() Tokenizer {
+	return &AbstractTokenizer{
+		keeper: &NotSpaceKeeper{},
+	}
+}
+
 type Buffer struct {
 	bytes  []byte
 	buffer *bytes.Buffer
