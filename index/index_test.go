@@ -84,7 +84,6 @@ func BenchmarkSentence(b *testing.B) {
 }
 
 func BenchmarkMatch(b *testing.B) {
-
 	idx, _ := NewSimple()
 	s1 := idx.store.Sentence([]byte("Rien à voir"))
 	s2 := idx.store.Sentence([]byte("beuha super aussi"))
