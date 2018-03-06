@@ -8,10 +8,10 @@ import (
 
 func TestToken(t *testing.T) {
 	tokens := Split([]byte("Beuha  aussi 42 "))
-	t.Log(tokens)
-	for _, tok := range tokens {
-		t.Log(string(tok))
-	}
+	assert.Equal(t, 3, len(tokens))
+	assert.Equal(t, []byte("Beuha"), tokens[0])
+	assert.Equal(t, []byte("aussi"), tokens[1])
+	assert.Equal(t, []byte("42"), tokens[2])
 }
 
 func TestBuffer(t *testing.T) {

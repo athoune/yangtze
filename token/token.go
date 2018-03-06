@@ -66,7 +66,7 @@ func Split(input []byte) [][]byte {
 			last_is_letter = true
 		} else {
 			if last_is_letter {
-				out = append(out, input[prems:offset])
+				out = append(out, input[prems:offset-1])
 			}
 			last_is_letter = false
 			prems = offset
