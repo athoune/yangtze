@@ -1,7 +1,6 @@
 package token
 
 import (
-	"bytes"
 	"io"
 	"unicode"
 	"unicode/utf8"
@@ -30,7 +29,6 @@ type AbstractTokenizer struct {
 func (t *AbstractTokenizer) Tokenize(b []byte) *Buffer {
 	return &Buffer{
 		bytes:  b,
-		buffer: bytes.NewBuffer(b),
 		keeper: t.keeper,
 	}
 }
@@ -54,14 +52,12 @@ func NewNotSpaceTokenizer() Tokenizer {
 
 type Buffer struct {
 	bytes  []byte
-	buffer *bytes.Buffer
 	keeper Keeper
 	offset int
 	prems  int
 }
 
 func (b *Buffer) Reset() {
-	b.buffer = bytes.NewBuffer(b.bytes)
 	b.prems = 0
 	b.offset = 0
 }
@@ -71,15 +67,8 @@ func (b *Buffer) Read() ([]byte, error) {
 		return nil, io.EOF
 	}
 	last_is_letter := false
-	for r, size, err := b.buffer.ReadRune(); true; r, size, err = b.buffer.ReadRune() {
-		if err == io.EOF {
-			r := b.bytes[b.prems:b.offset]
-			b.prems = b.offset
-			return r, nil
-		}
-		if err != nil {
-			return nil, err
-		}
+	for b.offset < len(b.bytes) {
+		r, size := utf8.DecodeRune(b.bytes[b.offset:])
 		b.offset += size
 		if b.keeper.DoIKeep(r) {
 			last_is_letter = true
