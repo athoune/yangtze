@@ -7,22 +7,51 @@ import (
 	"unicode/utf8"
 )
 
-func DoIKeep(r rune) bool {
+type Keeper interface {
+	DoIKeep(r rune) bool
+}
+
+type NotSpaceKeeper struct{}
+
+func (t *NotSpaceKeeper) DoIKeep(r rune) bool {
+	return !unicode.IsSpace(r)
+}
+
+type SimpleKeeper struct{}
+
+func (s *SimpleKeeper) DoIKeep(r rune) bool {
 	return unicode.IsLetter(r) || unicode.IsDigit(r) || r == '-' || r == '_'
+}
+
+type AbstractTokenizer struct {
+	keeper Keeper
+}
+
+func (t *AbstractTokenizer) Tokenize(b []byte) *Buffer {
+	return &Buffer{
+		bytes:  b,
+		buffer: bytes.NewBuffer(b),
+		keeper: t.keeper,
+	}
+}
+
+type Tokenizer interface {
+	Tokenize(b []byte) *Buffer
+	Split(input []byte) [][]byte
+}
+
+func NewSimpleTokenizer() Tokenizer {
+	return &AbstractTokenizer{
+		keeper: &SimpleKeeper{},
+	}
 }
 
 type Buffer struct {
 	bytes  []byte
 	buffer *bytes.Buffer
+	keeper Keeper
 	offset int
 	prems  int
-}
-
-func NewBuffer(b []byte) *Buffer {
-	return &Buffer{
-		bytes:  b,
-		buffer: bytes.NewBuffer(b),
-	}
 }
 
 func (b *Buffer) Read() ([]byte, error) {
@@ -40,7 +69,7 @@ func (b *Buffer) Read() ([]byte, error) {
 			return nil, err
 		}
 		b.offset += size
-		if DoIKeep(r) {
+		if b.keeper.DoIKeep(r) {
 			last_is_letter = true
 		} else {
 			if last_is_letter {
@@ -54,7 +83,7 @@ func (b *Buffer) Read() ([]byte, error) {
 	return nil, io.EOF
 }
 
-func Split(input []byte) [][]byte {
+func (t *AbstractTokenizer) Split(input []byte) [][]byte {
 	offset := 0
 	prems := 0
 	out := make([][]byte, 0)
@@ -62,7 +91,7 @@ func Split(input []byte) [][]byte {
 	for offset < len(input) {
 		currRune, size := utf8.DecodeRune(input[offset:])
 		offset += size
-		if DoIKeep(currRune) {
+		if t.keeper.DoIKeep(currRune) {
 			last_is_letter = true
 		} else {
 			if last_is_letter {
