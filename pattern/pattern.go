@@ -2,9 +2,8 @@ package pattern
 
 import (
 	"github.com/athoune/yangtze/store"
-	"github.com/blevesearch/bleve/analysis"
-	"github.com/blevesearch/bleve/analysis/tokenizer/whitespace"
-	"strings"
+	"github.com/athoune/yangtze/token"
+	"io"
 )
 
 type Kind int
@@ -22,42 +21,40 @@ type Pattern struct {
 }
 
 type Parser struct {
-	tokenizer analysis.Tokenizer
+	tokenizer token.Tokenizer
 	store     *store.Store
 }
 
 func NewParser(s *store.Store) *Parser {
-	tokenizer, _ := whitespace.TokenizerConstructor(nil, nil)
 	return &Parser{
-		tokenizer: tokenizer,
+		tokenizer: token.NewNotSpaceTokenizer(),
 		store:     s,
 	}
 }
 
 type Token struct {
-	Value      string
+	Value      []byte
 	Kind       Kind
 	Position   int
 	StartsWith bool // *
 	Sentence   store.Sentence
 }
 
-func NewToken(value string, position int) *Token {
-	s := strings.HasSuffix(value, "*")
+func NewToken(value []byte) *Token {
+	s := len(value) > 0 && value[len(value)-1] == byte('*')
 	if s {
 		value = value[0 : len(value)-1]
 	}
 	return &Token{
 		Kind:       whatKind(value),
 		Value:      value,
-		Position:   position,
 		StartsWith: s,
 		Sentence:   make(store.Sentence, 0),
 	}
 }
 
-func whatKind(value string) Kind {
-	switch value {
+func whatKind(value []byte) Kind {
+	switch string(value) {
 	case ".":
 		return Star
 	case "?":
@@ -69,21 +66,21 @@ func whatKind(value string) Kind {
 	}
 }
 
-func (p *Parser) Parse(src string) (*Pattern, error) {
-	tokens := p.tokenizer.Tokenize([]byte(src))
+func (p *Parser) Parse(src []byte) (*Pattern, error) {
+	tokens := p.tokenizer.Tokenize(src)
 	s := Pattern{
 		Tokens:        make([]*Token, 0),
 		HasStartsWith: false,
 	}
 	var previous *Token = nil
-	for _, tok := range tokens {
-		t := NewToken(string(tok.Term), tok.Start)
+	for tok, err := tokens.Read(); err != io.EOF; tok, err = tokens.Read() {
+		t := NewToken(tok)
 		if previous == nil || t.Kind != JustAToken || (t.Kind == JustAToken && previous.Kind != JustAToken) {
 			s.Tokens = append(s.Tokens, t)
 			previous = t
 		}
 		if t.Kind == JustAToken {
-			previous.Sentence = append(previous.Sentence, p.store.AddWord(tok.Term))
+			previous.Sentence = append(previous.Sentence, p.store.AddWord(tok))
 		}
 		s.HasStartsWith = s.HasStartsWith || t.StartsWith
 	}

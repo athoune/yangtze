@@ -9,7 +9,7 @@ import (
 func TestParse(t *testing.T) {
 	s := store.NewSimple()
 	parser := NewParser(s)
-	p, err := parser.Parse("sudo pam_unix ... session opened for user*")
+	p, err := parser.Parse([]byte("sudo pam_unix ... session opened for user*"))
 	assert.Nil(t, err)
 	assert.Equal(t, 3, len(p.Tokens))
 	assert.Equal(t, JustAToken, p.Tokens[0].Kind)
@@ -23,15 +23,15 @@ func TestParse(t *testing.T) {
 func TestMatch(t *testing.T) {
 	s := store.NewSimple()
 	parser := NewParser(s)
-	p, err := parser.Parse("a b . d")
+	p, err := parser.Parse([]byte("a b . d"))
 	assert.Nil(t, err)
 	assert.True(t, p.Match(s.Sentence([]byte("a b c d"))))
 	assert.False(t, p.Match(s.Sentence([]byte("a b  d"))))
-	p, err = parser.Parse("a b ... d")
+	p, err = parser.Parse([]byte("a b ... d"))
 	assert.Nil(t, err)
 	assert.True(t, p.Match(s.Sentence([]byte("a b c d"))))
 	assert.True(t, p.Match(s.Sentence([]byte("a b a b d"))))
-	p, err = parser.Parse("a b ? d")
+	p, err = parser.Parse([]byte("a b ? d"))
 	assert.Nil(t, err)
 	assert.True(t, p.Match(s.Sentence([]byte("a b c d"))))
 	assert.True(t, p.Match(s.Sentence([]byte("a b d"))))
@@ -41,7 +41,7 @@ func TestMatch(t *testing.T) {
 func TestMoreMatch(t *testing.T) {
 	s := store.NewSimple()
 	parser := NewParser(s)
-	p, err := parser.Parse("beuha ... aussi")
+	p, err := parser.Parse([]byte("beuha ... aussi"))
 	assert.Nil(t, err)
 	assert.False(t, p.Match(s.Sentence([]byte("Aussi super beuha"))))
 }

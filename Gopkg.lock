@@ -2,27 +2,6 @@
 
 
 [[projects]]
-  name = "github.com/blevesearch/bleve"
-  packages = [
-    "analysis",
-    "analysis/analyzer/simple",
-    "analysis/token/lowercase",
-    "analysis/tokenizer/character",
-    "analysis/tokenizer/letter",
-    "analysis/tokenizer/whitespace",
-    "document",
-    "geo",
-    "index",
-    "index/store",
-    "numeric",
-    "registry",
-    "search",
-    "search/highlight"
-  ]
-  revision = "0456569b6240ce13fc7bfed00e10b3f99e68a3e2"
-  version = "v0.6.0"
-
-[[projects]]
   name = "github.com/davecgh/go-spew"
   packages = ["spew"]
   revision = "346938d642f2ec3594ed81d874461961cd0faa76"
@@ -52,15 +31,9 @@
   revision = "12b6f73e6084dad08a7c6e575284b177ecafbc71"
   version = "v1.2.1"
 
-[[projects]]
-  branch = "master"
-  name = "golang.org/x/net"
-  packages = ["context"]
-  revision = "cbe0f9307d0156177f9dd5dc85da1a31abc5f2fb"
-
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "1ac068579026756d8fc7b0deac15253f123bd09a998a7698dbee00adafa0d0b3"
+  inputs-digest = "fccd446f7d9b43043f4263658c7fe82c6eac15a56c3cd520903f1fe3651ef2ec"
   solver-name = "gps-cdcl"
   solver-version = 1

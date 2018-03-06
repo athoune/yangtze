@@ -3,7 +3,7 @@ package index
 import (
 	"github.com/athoune/yangtze/pattern"
 	"github.com/athoune/yangtze/store"
-	"github.com/blevesearch/bleve/analysis"
+	"github.com/athoune/yangtze/token"
 	"sync"
 )
 
@@ -14,9 +14,9 @@ type Index struct {
 	mux      sync.Mutex
 }
 
-func New(analyzer *analysis.Analyzer) (*Index, error) {
+func New(tokenizer token.Tokenizer) (*Index, error) {
 	return &Index{
-		store:    store.New(analyzer),
+		store:    store.New(tokenizer),
 		patterns: make([]*pattern.Pattern, 0),
 		inverse:  make(map[store.Word][]int),
 	}, nil
