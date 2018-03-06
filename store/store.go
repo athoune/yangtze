@@ -12,7 +12,7 @@ const Nothing = Word(0)
 
 type Store struct {
 	Words    *radix.Tree
-	analyzer *analysis.Analyzer
+	Analyzer *analysis.Analyzer
 	cache    *registry.Cache
 	cpt_word uint32
 	mux      sync.Mutex
@@ -21,7 +21,7 @@ type Store struct {
 func New(analyzer *analysis.Analyzer) *Store {
 	return &Store{
 		Words:    radix.New(),
-		analyzer: analyzer,
+		Analyzer: analyzer,
 		cache:    registry.NewCache(),
 	}
 }
@@ -31,7 +31,7 @@ func NewSimple() *Store {
 	analyzer, _ := simple.AnalyzerConstructor(nil, cache)
 	return &Store{
 		Words:    radix.New(),
-		analyzer: analyzer,
+		Analyzer: analyzer,
 		cache:    cache,
 	}
 }
