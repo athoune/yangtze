@@ -15,6 +15,13 @@ type Store struct {
 	mux       sync.Mutex
 }
 
+func New(tokenizer token.Tokenizer) *Store {
+	return &Store{
+		Words:     radix.New(),
+		Tokenizer: tokenizer,
+	}
+}
+
 func NewSimple() *Store {
 	return &Store{
 		Words:     radix.New(),
