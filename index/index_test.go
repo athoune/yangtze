@@ -1,7 +1,12 @@
 package index
 
 import (
+	"github.com/athoune/yangtze/store"
+	"github.com/athoune/yangtze/token"
 	"github.com/stretchr/testify/assert"
+	"io"
+	"regexp"
+	"strings"
 	"testing"
 )
 
@@ -33,6 +38,83 @@ func BenchmarkIndex(b *testing.B) {
 			_, _ = idx.ReadLine([]byte("Rien à voir"))
 		} else {
 			_, _ = idx.ReadLine([]byte("Beuha super aussi"))
+		}
+	}
+}
+
+func BenchmarkAnalyzer(b *testing.B) {
+	s := store.NewSimple()
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		if i%10 <= 8 {
+			s.Analyzer.Analyze([]byte("Rien à voir"))
+		} else {
+			s.Analyzer.Analyze([]byte("Beuha super aussi"))
+		}
+	}
+}
+
+func BenchmarkToken(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		if i%10 <= 8 {
+			token.Split([]byte("Rien à voir"))
+		} else {
+			token.Split([]byte("Beuha super aussi"))
+		}
+	}
+}
+
+func BenchmarkBuffer(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		if i%10 <= 8 {
+			b := token.NewBuffer([]byte("Rien à voir"))
+			for _, err := b.Read(); err != io.EOF; _, err = b.Read() {
+			}
+		} else {
+			b := token.NewBuffer([]byte("Beuha super aussi"))
+			for _, err := b.Read(); err != io.EOF; _, err = b.Read() {
+			}
+		}
+	}
+}
+
+func BenchmarkSentence(b *testing.B) {
+	idx, _ := NewSimple()
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		if i%10 <= 8 {
+			idx.store.Sentence([]byte("Rien à voir"))
+		} else {
+			idx.store.Sentence([]byte("Beuha super aussi"))
+		}
+	}
+}
+
+func BenchmarkMatch(b *testing.B) {
+
+	idx, _ := NewSimple()
+	s1 := idx.store.Sentence([]byte("Rien à voir"))
+	s2 := idx.store.Sentence([]byte("Beuha super aussi"))
+	p, _ := idx.Parser().Parse("beuha ... aussi")
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		if i%10 <= 8 {
+			p.Match(s1)
+		} else {
+			p.Match(s2)
+		}
+	}
+}
+
+func BenchmarkRegexp(b *testing.B) {
+	r := regexp.MustCompile("beuha .* aussi")
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		if i%10 <= 8 {
+			r.MatchString(strings.ToLower("Rien à voir"))
+		} else {
+			r.MatchString(strings.ToLower("Beuha super aussi"))
 		}
 	}
 }
