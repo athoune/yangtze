@@ -67,7 +67,7 @@ func (b *Buffer) Read() ([]byte, error) {
 		return nil, io.EOF
 	}
 	last_is_letter := false
-	for b.offset < len(b.bytes) {
+	for b.offset <= len(b.bytes) {
 		r, size := utf8.DecodeRune(b.bytes[b.offset:])
 		b.offset += size
 		if b.keeper.DoIKeep(r) {
