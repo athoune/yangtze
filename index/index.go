@@ -8,25 +8,22 @@ import (
 )
 
 type Index struct {
-	store    *store.Store
-	patterns []*pattern.Pattern
-	inverse  map[store.Word][]int
-	mux      sync.Mutex
+	store   *store.Store
+	inverse map[store.Word][]*pattern.Pattern
+	mux     sync.Mutex
 }
 
 func New(tokenizer token.Tokenizer) (*Index, error) {
 	return &Index{
-		store:    store.New(tokenizer),
-		patterns: make([]*pattern.Pattern, 0),
-		inverse:  make(map[store.Word][]int),
+		store:   store.New(tokenizer),
+		inverse: make(map[store.Word][]*pattern.Pattern),
 	}, nil
 }
 
 func NewSimple() (*Index, error) {
 	return &Index{
-		store:    store.NewSimple(),
-		patterns: make([]*pattern.Pattern, 0),
-		inverse:  make(map[store.Word][]int),
+		store:   store.NewSimple(),
+		inverse: make(map[store.Word][]*pattern.Pattern),
 	}, nil
 }
 
@@ -37,13 +34,12 @@ func (i *Index) Parser() *pattern.Parser {
 func (i *Index) AddPattern(p *pattern.Pattern) {
 	i.mux.Lock()
 	defer i.mux.Unlock()
-	i.patterns = append(i.patterns, p)
 	for _, word := range p.Sentence() {
 		if word != store.Nothing {
 			if _, ok := i.inverse[word]; ok {
-				i.inverse[word] = append(i.inverse[word], len(i.patterns))
+				i.inverse[word] = append(i.inverse[word], p)
 			} else {
-				i.inverse[word] = []int{len(i.patterns)}
+				i.inverse[word] = []*pattern.Pattern{p}
 			}
 		}
 	}
@@ -52,7 +48,7 @@ func (i *Index) AddPattern(p *pattern.Pattern) {
 func (i *Index) ReadLine(line []byte) ([]*pattern.Pattern, bool) {
 	patterns := make([]*pattern.Pattern, 0)
 	sentence := i.store.Sentence(line)
-	uniq := make(map[int]bool)
+	uniq := make(map[*pattern.Pattern]bool)
 	for _, word := range sentence {
 		if word != store.Nothing {
 			for _, ps := range i.inverse[word] {
@@ -64,9 +60,8 @@ func (i *Index) ReadLine(line []byte) ([]*pattern.Pattern, bool) {
 		return patterns, false
 	}
 	for p, _ := range uniq {
-		pp := i.patterns[p-1]
-		if pp.Match(sentence) {
-			patterns = append(patterns, pp)
+		if p.Match(sentence) {
+			patterns = append(patterns, p)
 		}
 	}
 	return patterns, len(patterns) > 0
