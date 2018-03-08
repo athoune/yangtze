@@ -5,19 +5,19 @@ type Word uint32
 func (s *Store) AddWord(word []byte) Word {
 	k, ok := s.Words.Get(word)
 	if ok {
-		return k.(Word)
+		return k
 	}
 	s.mux.Lock()
 	defer s.mux.Unlock()
 	s.cpt_word += 1
-	s.Words, _, _ = s.Words.Insert(word, Word(s.cpt_word))
+	s.Words.Set(word, Word(s.cpt_word))
 	return Word(s.cpt_word)
 }
 
 func (s *Store) Word(word []byte) Word {
 	k, ok := s.Words.Get(word)
 	if ok {
-		return k.(Word)
+		return k
 	}
 	return 0
 }
