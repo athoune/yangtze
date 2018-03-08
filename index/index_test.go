@@ -119,6 +119,18 @@ func BenchmarkRegexp(b *testing.B) {
 	}
 }
 
+func BenchmarkOneRegexp(b *testing.B) {
+	r := regexp.MustCompile("beuha .* aussi")
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		if i%10 <= 8 {
+			r.MatchString("Rien à voir")
+		} else {
+			r.MatchString("beuha super aussi")
+		}
+	}
+}
+
 func BenchmarkWord(b *testing.B) {
 	s := store.NewSimple()
 	s.AddWord([]byte("beuha"))
