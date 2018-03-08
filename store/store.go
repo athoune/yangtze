@@ -29,6 +29,29 @@ func (r *RadixKV) Get(k []byte) (Word, bool) {
 	return Word(0), false
 }
 
+func NewRadixKV() *RadixKV {
+	return &RadixKV{radix.New()}
+}
+
+type MapKV struct {
+	store map[string]Word
+}
+
+func (m *MapKV) Set(k []byte, v Word) {
+	m.store[string(k)] = v
+}
+
+func (m *MapKV) Get(k []byte) (Word, bool) {
+	v, ok := m.store[string(k)]
+	return v, ok
+}
+
+func NewMapKV() *MapKV {
+	return &MapKV{
+		store: make(map[string]Word),
+	}
+}
+
 type Store struct {
 	Words     kv
 	cpt_word  uint32
@@ -38,14 +61,14 @@ type Store struct {
 
 func New(tokenizer token.Tokenizer) *Store {
 	return &Store{
-		Words:     &RadixKV{radix.New()},
+		Words:     NewMapKV(),
 		Tokenizer: tokenizer,
 	}
 }
 
 func NewSimple() *Store {
 	return &Store{
-		Words:     &RadixKV{radix.New()},
+		Words:     NewMapKV(),
 		Tokenizer: token.NewSimpleTokenizer(),
 	}
 }
