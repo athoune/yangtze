@@ -148,3 +148,22 @@ func BenchmarkWord(b *testing.B) {
 		}
 	}
 }
+
+func BenchmarkMap(b *testing.B) {
+	s := map[string]int{
+		"beuha": 1,
+		"aussi": 2,
+	}
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		if i%10 <= 8 {
+			_ = s["Rien"]
+			_ = s["à"]
+			_ = s["voir"]
+		} else {
+			_ = s["beuha"]
+			_ = s["super"]
+			_ = s["aussi"]
+		}
+	}
+}
