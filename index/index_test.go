@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/athoune/yangtze/store"
 	"github.com/athoune/yangtze/token"
+	radix "github.com/hashicorp/go-immutable-radix"
 	"github.com/stretchr/testify/assert"
 	"io"
 	"regexp"
@@ -164,6 +165,24 @@ func BenchmarkMap(b *testing.B) {
 			_ = s["beuha"]
 			_ = s["super"]
 			_ = s["aussi"]
+		}
+	}
+}
+
+func BenchmarkRadix(b *testing.B) {
+	s := radix.New()
+	s, _, _ = s.Insert([]byte("beuha"), 1)
+	s, _, _ = s.Insert([]byte("aussi"), 2)
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		if i%10 <= 8 {
+			_, _ = s.Get([]byte("Rien"))
+			_, _ = s.Get([]byte("à"))
+			_, _ = s.Get([]byte("voir"))
+		} else {
+			_, _ = s.Get([]byte("beuha"))
+			_, _ = s.Get([]byte("super"))
+			_, _ = s.Get([]byte("aussi"))
 		}
 	}
 }
