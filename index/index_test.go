@@ -101,8 +101,8 @@ func BenchmarkMatch(b *testing.B) {
 }
 
 func BenchmarkRegexp(b *testing.B) {
-	r := make([]*regexp.Regexp, 100)
-	for i := 0; i < 100; i++ {
+	r := make([]*regexp.Regexp, 10)
+	for i := 0; i < 10; i++ {
 		r[i] = regexp.MustCompile(fmt.Sprintf("beuha .* aussi%v", i))
 	}
 	b.ResetTimer()
