@@ -72,6 +72,11 @@ func (b *Buffer) Read() ([]byte, error) {
 		b.offset += size
 		if b.keeper.DoIKeep(r) {
 			last_is_letter = true
+			if b.offset == len(b.bytes) {
+				r := b.bytes[b.prems : b.offset-size+1]
+				b.prems = b.offset
+				return r, nil
+			}
 		} else {
 			if last_is_letter {
 				r := b.bytes[b.prems : b.offset-size]

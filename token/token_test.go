@@ -10,24 +10,37 @@ func TestToken(t *testing.T) {
 	tok := NewSimpleTokenizer()
 	tokens := tok.Split([]byte("Beuha  aussi 42. "))
 	assert.Equal(t, 3, len(tokens))
-	assert.Equal(t, []byte("Beuha"), tokens[0])
-	assert.Equal(t, []byte("aussi"), tokens[1])
-	assert.Equal(t, []byte("42"), tokens[2])
+	assert.Equal(t, "Beuha", string(tokens[0]))
+	assert.Equal(t, "aussi", string(tokens[1]))
+	assert.Equal(t, "42", string(tokens[2]))
 }
 
 func TestBuffer(t *testing.T) {
 	tok := NewSimpleTokenizer()
-	b := tok.Tokenize([]byte("Beuha  aussi 42 "))
+	b := tok.Tokenize([]byte("Beuha  aussi 42"))
 	l, err := b.Read()
 	assert.Nil(t, err)
-	assert.Equal(t, []byte("Beuha"), l)
+	assert.Equal(t, "Beuha", string(l))
 	l, err = b.Read()
 	assert.Nil(t, err)
-	assert.Equal(t, []byte("aussi"), l)
+	assert.Equal(t, "aussi", string(l))
 	l, err = b.Read()
 	assert.Nil(t, err)
-	assert.Equal(t, []byte("42"), l)
+	assert.Equal(t, "42", string(l))
 	l, err = b.Read()
 	assert.Nil(t, l)
+	assert.Equal(t, io.EOF, err)
+}
+
+func TestPattern(t *testing.T) {
+	tok := NewSimpleTokenizer()
+	b := tok.Tokenize([]byte("sudo pam_unix ... session opened for user"))
+	zz := []string{"sudo", "pam_unix", "session", "opened", "for", "user"}
+	for i := 0; i < 6; i++ {
+		z, err := b.Read()
+		assert.Nil(t, err)
+		assert.Equal(t, zz[i], string(z))
+	}
+	_, err := b.Read()
 	assert.Equal(t, io.EOF, err)
 }
