@@ -19,6 +19,7 @@ const (
 type Pattern struct {
 	Tokens        []*Token
 	bitset        *bitset.BitSet
+	sentence      *store.Sentence
 	HasStartsWith bool
 }
 
@@ -125,11 +126,13 @@ func (p *Pattern) Match(sentence *store.Sentence) bool {
 }
 
 func (p *Pattern) Sentence() *store.Sentence {
-	s := store.NewSentence()
-	for _, tok := range p.Tokens {
-		for _, ss := range tok.Sentence.Words {
-			s.Add(ss)
+	if p.sentence == nil {
+		p.sentence = store.NewSentence()
+		for _, tok := range p.Tokens {
+			for _, ss := range tok.Sentence.Words {
+				p.sentence.Add(ss)
+			}
 		}
 	}
-	return s
+	return p.sentence
 }
