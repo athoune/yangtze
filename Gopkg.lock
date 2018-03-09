@@ -31,9 +31,15 @@
   revision = "12b6f73e6084dad08a7c6e575284b177ecafbc71"
   version = "v1.2.1"
 
+[[projects]]
+  name = "github.com/willf/bitset"
+  packages = ["."]
+  revision = "d860f346b89450988a379d7d705e83c58d1ea227"
+  version = "v1.1.3"
+
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "fccd446f7d9b43043f4263658c7fe82c6eac15a56c3cd520903f1fe3651ef2ec"
+  inputs-digest = "74952c46296530843909b3cb9a5289189dc9c9bf23f5862d8c14a10073871be5"
   solver-name = "gps-cdcl"
   solver-version = 1
