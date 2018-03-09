@@ -3,6 +3,7 @@ package pattern
 import (
 	"github.com/athoune/yangtze/store"
 	"github.com/athoune/yangtze/token"
+	"github.com/willf/bitset"
 	"io"
 )
 
@@ -17,6 +18,7 @@ const (
 
 type Pattern struct {
 	Tokens        []*Token
+	bitset        *bitset.BitSet
 	HasStartsWith bool
 }
 
@@ -70,6 +72,7 @@ func (p *Parser) Parse(src []byte) (*Pattern, error) {
 	tokens := p.tokenizer.Tokenize(src)
 	s := Pattern{
 		Tokens:        make([]*Token, 0),
+		bitset:        bitset.New(0),
 		HasStartsWith: false,
 	}
 	var previous *Token = nil
@@ -80,7 +83,9 @@ func (p *Parser) Parse(src []byte) (*Pattern, error) {
 			previous = t
 		}
 		if t.Kind == JustAToken {
-			previous.Sentence.Add(p.store.AddWord(tok))
+			w := p.store.AddWord(tok)
+			previous.Sentence.Add(w)
+			s.bitset.Set(uint(w))
 		}
 		s.HasStartsWith = s.HasStartsWith || t.StartsWith
 	}
@@ -89,6 +94,12 @@ func (p *Parser) Parse(src []byte) (*Pattern, error) {
 }
 
 func (p *Pattern) Match(sentence *store.Sentence) bool {
+	if p.bitset.Len() > sentence.Bitset.Len() {
+		return false
+	}
+	if !sentence.Bitset.IsSuperSet(p.bitset) {
+		return false
+	}
 	start := 0
 	mode := AllStars
 	for i, tok := range p.Tokens {
