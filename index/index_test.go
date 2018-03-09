@@ -186,3 +186,16 @@ func BenchmarkRadix(b *testing.B) {
 		}
 	}
 }
+
+func BenchmarkBitset(b *testing.B) {
+	ok := store.NewSentence(1, 2, 3)
+	ko := store.NewSentence(4, 5, 6)
+	pattern := store.NewSentence(1, 2)
+	for i := 0; i < b.N; i++ {
+		if i%10 <= 8 {
+			pattern.Bitset.IsSuperSet(ko.Bitset)
+		} else {
+			pattern.Bitset.IsSuperSet(ok.Bitset)
+		}
+	}
+}
