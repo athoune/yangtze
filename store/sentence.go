@@ -25,7 +25,11 @@ func (s *Store) AddSentence(sentence []byte) *Sentence {
 	tokens := s.Tokenizer.Tokenize(sentence)
 	r := NewSentence()
 	for token, err := tokens.Read(); err != io.EOF; token, err = tokens.Read() {
-		r.Words = append(r.Words, s.AddWord(token))
+		w := s.AddWord(token)
+		r.Words = append(r.Words, w)
+		if w != 0 {
+			r.Bitset.Set(uint(w))
+		}
 	}
 	return r
 }
