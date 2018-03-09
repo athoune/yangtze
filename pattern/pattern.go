@@ -94,9 +94,6 @@ func (p *Parser) Parse(src []byte) (*Pattern, error) {
 }
 
 func (p *Pattern) Match(sentence *store.Sentence) bool {
-	if p.bitset.Len() > sentence.Bitset.Len() {
-		return false
-	}
 	if !sentence.Bitset.IsSuperSet(p.bitset) {
 		return false
 	}
