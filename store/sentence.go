@@ -7,16 +7,16 @@ import (
 
 type Sentence struct {
 	Words  []Word
-	bitset *bitset.BitSet
+	Bitset *bitset.BitSet
 }
 
 func NewSentence(words ...Word) *Sentence {
 	s := &Sentence{
 		Words:  words,
-		bitset: bitset.New(uint(len(words))),
+		Bitset: bitset.New(uint(len(words))),
 	}
 	for _, word := range words {
-		s.bitset.Set(uint(word))
+		s.Bitset.Set(uint(word))
 	}
 	return s
 }
@@ -37,7 +37,7 @@ func (s *Store) Sentence(sentence []byte) *Sentence {
 	cpt := 0
 	r := &Sentence{
 		Words:  make([]Word, bufferSize),
-		bitset: bitset.New(bufferSize),
+		Bitset: bitset.New(bufferSize),
 	}
 	for tok, err := tokens.Read(); err != io.EOF; tok, err = tokens.Read() {
 		w := s.Word(tok)
@@ -46,7 +46,9 @@ func (s *Store) Sentence(sentence []byte) *Sentence {
 		} else {
 			r.Words = append(r.Words, w)
 		}
-		r.bitset.Set(uint(w))
+		if w != 0 {
+			r.Bitset.Set(uint(w))
+		}
 		cpt += 1
 	}
 	r.Words = r.Words[:cpt]
@@ -55,7 +57,9 @@ func (s *Store) Sentence(sentence []byte) *Sentence {
 
 func (s *Sentence) Add(word Word) {
 	s.Words = append(s.Words, word)
-	s.bitset.Set(uint(word))
+	if word != 0 {
+		s.Bitset.Set(uint(word))
+	}
 }
 
 func (s *Sentence) Length() int {
