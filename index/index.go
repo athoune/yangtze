@@ -34,7 +34,7 @@ func (i *Index) Parser() *pattern.Parser {
 func (i *Index) AddPattern(p *pattern.Pattern) {
 	i.mux.Lock()
 	defer i.mux.Unlock()
-	for _, word := range p.Sentence() {
+	for _, word := range p.Sentence().Words {
 		if word != store.Nothing {
 			if _, ok := i.inverse[word]; ok {
 				i.inverse[word] = append(i.inverse[word], p)
@@ -49,7 +49,7 @@ func (i *Index) ReadLine(line []byte) ([]*pattern.Pattern, bool) {
 	patterns := make([]*pattern.Pattern, 0)
 	sentence := i.store.Sentence(line)
 	uniq := make(map[*pattern.Pattern]bool)
-	for _, word := range sentence {
+	for _, word := range sentence.Words {
 		if word != store.Nothing {
 			for _, ps := range i.inverse[word] {
 				uniq[ps] = true

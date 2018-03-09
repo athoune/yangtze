@@ -15,9 +15,9 @@ func TestParse(t *testing.T) {
 	assert.Equal(t, JustAToken, p.Tokens[0].Kind)
 	assert.Equal(t, AllStars, p.Tokens[1].Kind)
 	assert.Equal(t, JustAToken, p.Tokens[2].Kind)
-	assert.Equal(t, 2, len(p.Tokens[0].Sentence))
-	assert.Equal(t, 0, len(p.Tokens[1].Sentence))
-	assert.Equal(t, 4, len(p.Tokens[2].Sentence))
+	assert.Equal(t, 2, p.Tokens[0].Sentence.Length())
+	assert.Equal(t, 0, p.Tokens[1].Sentence.Length())
+	assert.Equal(t, 4, p.Tokens[2].Sentence.Length())
 }
 
 func TestMatch(t *testing.T) {

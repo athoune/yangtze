@@ -37,7 +37,7 @@ type Token struct {
 	Kind       Kind
 	Position   int
 	StartsWith bool // *
-	Sentence   store.Sentence
+	Sentence   *store.Sentence
 }
 
 func NewToken(value []byte) *Token {
@@ -49,7 +49,7 @@ func NewToken(value []byte) *Token {
 		Kind:       whatKind(value),
 		Value:      value,
 		StartsWith: s,
-		Sentence:   make(store.Sentence, 0),
+		Sentence:   store.NewSentence(),
 	}
 }
 
@@ -80,7 +80,7 @@ func (p *Parser) Parse(src []byte) (*Pattern, error) {
 			previous = t
 		}
 		if t.Kind == JustAToken {
-			previous.Sentence = append(previous.Sentence, p.store.AddWord(tok))
+			previous.Sentence.Add(p.store.AddWord(tok))
 		}
 		s.HasStartsWith = s.HasStartsWith || t.StartsWith
 	}
@@ -88,7 +88,7 @@ func (p *Parser) Parse(src []byte) (*Pattern, error) {
 	return &s, nil
 }
 
-func (p *Pattern) Match(sentence store.Sentence) bool {
+func (p *Pattern) Match(sentence *store.Sentence) bool {
 	start := 0
 	mode := AllStars
 	for i, tok := range p.Tokens {
@@ -96,7 +96,7 @@ func (p *Pattern) Match(sentence store.Sentence) bool {
 		case Star:
 			start += 1
 		case JustAToken:
-			idx := sentence[start:len(sentence)].Index(tok.Sentence)
+			idx := store.Index(sentence.Words[start:len(sentence.Words)], tok.Sentence.Words)
 			if idx == -1 {
 				return false
 			}
@@ -106,8 +106,8 @@ func (p *Pattern) Match(sentence store.Sentence) bool {
 			if mode == JustAToken && idx > 0 {
 				return false
 			}
-			start += len(tok.Sentence) + idx
-			if start == len(sentence) && (i+1) == len(p.Tokens) {
+			start += tok.Sentence.Length() + idx
+			if start == sentence.Length() && (i+1) == len(p.Tokens) {
 				return true
 			}
 		}
@@ -116,11 +116,11 @@ func (p *Pattern) Match(sentence store.Sentence) bool {
 	return false
 }
 
-func (p *Pattern) Sentence() store.Sentence {
-	s := make(store.Sentence, 0)
+func (p *Pattern) Sentence() *store.Sentence {
+	s := store.NewSentence()
 	for _, tok := range p.Tokens {
-		for _, ss := range tok.Sentence {
-			s = append(s, ss)
+		for _, ss := range tok.Sentence.Words {
+			s.Add(ss)
 		}
 	}
 	return s

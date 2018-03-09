@@ -4,35 +4,64 @@ import (
 	"io"
 )
 
-type Sentence []Word
+type Sentence struct {
+	Words []Word
+}
 
-func (s *Store) AddSentence(sentence []byte) Sentence {
+func NewSentence(words ...Word) *Sentence {
+	return &Sentence{
+		Words: words,
+	}
+}
+
+func (s *Store) AddSentence(sentence []byte) *Sentence {
 	tokens := s.Tokenizer.Tokenize(sentence)
-	r := make(Sentence, 0)
+	r := NewSentence()
 	for token, err := tokens.Read(); err != io.EOF; token, err = tokens.Read() {
-		r = append(r, s.AddWord(token))
+		r.Words = append(r.Words, s.AddWord(token))
 	}
 	return r
 }
 
 const bufferSize = 64
 
-func (s *Store) Sentence(sentence []byte) Sentence {
+func (s *Store) Sentence(sentence []byte) *Sentence {
 	tokens := s.Tokenizer.Tokenize(sentence)
 	cpt := 0
-	r := make(Sentence, bufferSize)
+	r := &Sentence{
+		Words: make([]Word, bufferSize),
+	}
 	for tok, err := tokens.Read(); err != io.EOF; tok, err = tokens.Read() {
 		if cpt < bufferSize {
-			r[cpt] = s.Word(tok)
+			r.Words[cpt] = s.Word(tok)
 		} else {
-			r = append(r, s.Word(tok))
+			r.Words = append(r.Words, s.Word(tok))
 		}
 		cpt += 1
 	}
-	return r[:cpt]
+	r.Words = r.Words[:cpt]
+	return r
 }
 
-func (s Sentence) Index(substr Sentence) int {
+func (s *Sentence) Add(word Word) {
+	s.Words = append(s.Words, word)
+}
+
+func (s *Sentence) Length() int {
+	return len(s.Words)
+}
+
+func (s *Sentence) Slice(start int, end int) *Sentence {
+	return &Sentence{
+		Words: s.Words[start:end],
+	}
+}
+
+func (s *Sentence) Index(substr *Sentence) int {
+	return Index(s.Words, substr.Words)
+}
+
+func Index(s []Word, substr []Word) int {
 	if len(substr) == 0 || len(s) == 0 || len(substr) > len(s) {
 		return -1
 	}

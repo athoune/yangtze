@@ -8,11 +8,11 @@ import (
 type Set []uint32
 
 // Sorted set without 0
-func NewSet(words store.Sentence) Set {
-	sort.Slice(words, func(i, j int) bool { return words[i] < words[j] })
-	clean := []uint32{uint32(words[0])}
-	last := words[0]
-	for _, v := range words[1:len(words)] {
+func NewSet(words *store.Sentence) Set {
+	sort.Slice(words.Words, func(i, j int) bool { return words.Words[i] < words.Words[j] })
+	clean := []uint32{uint32(words.Words[0])}
+	last := words.Words[0]
+	for _, v := range words.Words[1:words.Length()] {
 		if v != last {
 			clean = append(clean, uint32(v))
 			last = v

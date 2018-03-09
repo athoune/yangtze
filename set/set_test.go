@@ -7,7 +7,7 @@ import (
 )
 
 func TestSet(t *testing.T) {
-	set := NewSet(store.Sentence{2, 1, 3, 0, 0, 0})
+	set := NewSet(store.NewSentence(2, 1, 3, 0, 0, 0))
 	assert.Equal(t, set, Set{1, 2, 3})
 	assert.True(t, set.Contains(Set{1, 2, 3}))
 	assert.True(t, set.Contains(Set{1, 2}))
