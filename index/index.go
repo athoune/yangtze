@@ -46,20 +46,19 @@ func (i *Index) AddPattern(p *pattern.Pattern) {
 }
 
 func (i *Index) ReadLine(line []byte) ([]*pattern.Pattern, bool) {
-	patterns := make([]*pattern.Pattern, 0)
 	sentence := i.store.Sentence(line)
-	uniq := make(map[*pattern.Pattern]bool)
-	for _, word := range sentence.Words {
-		if word != store.Nothing {
-			for _, ps := range i.inverse[word] {
-				uniq[ps] = true
-			}
+	var w store.Word = 0
+	for _, ww := range sentence.Words {
+		if ww != 0 {
+			w = ww
+			break
 		}
 	}
-	if len(uniq) == 0 {
-		return patterns, false
+	if w == 0 {
+		return nil, false
 	}
-	for p, _ := range uniq {
+	patterns := make([]*pattern.Pattern, 0)
+	for _, p := range i.inverse[w] {
 		if p.Match(sentence) {
 			patterns = append(patterns, p)
 		}
