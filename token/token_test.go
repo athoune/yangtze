@@ -17,6 +17,10 @@ func TestToken(t *testing.T) {
 
 func TestBuffer(t *testing.T) {
 	tok := NewSimpleTokenizer()
+	testTokenizer(tok, t)
+}
+
+func testTokenizer(tok Tokenizer, t *testing.T) {
 	b := tok.Tokenize([]byte("Beuha  aussi 42"))
 	l, err := b.Read()
 	assert.Nil(t, err)
@@ -30,6 +34,11 @@ func TestBuffer(t *testing.T) {
 	l, err = b.Read()
 	assert.Nil(t, l)
 	assert.Equal(t, io.EOF, err)
+}
+
+func TestBufferII(t *testing.T) {
+	tok := NewSimpleTokenizerII()
+	testTokenizer(tok, t)
 }
 
 func TestPattern(t *testing.T) {

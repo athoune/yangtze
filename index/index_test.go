@@ -59,6 +59,15 @@ func BenchmarkToken(b *testing.B) {
 
 func BenchmarkBuffer(b *testing.B) {
 	t := token.NewSimpleTokenizer()
+	benchBuffer(t, b)
+}
+
+func BenchmarkBufferII(b *testing.B) {
+	t := token.NewSimpleTokenizerII()
+	benchBuffer(t, b)
+}
+
+func benchBuffer(t token.Tokenizer, b *testing.B) {
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		if i%10 <= 8 {

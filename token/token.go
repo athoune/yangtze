@@ -1,6 +1,7 @@
 package token
 
 import (
+	"github.com/martingallagher/runes"
 	"io"
 	"unicode"
 	"unicode/utf8"
@@ -22,6 +23,12 @@ func (s *SimpleKeeper) DoIKeep(r rune) bool {
 	return unicode.IsLetter(r) || unicode.IsDigit(r) || r == '-' || r == '_'
 }
 
+type SimpleKeeperII struct{}
+
+func (s *SimpleKeeperII) DoIKeep(r rune) bool {
+	return runes.IsLetter(r) || runes.IsDigit(r) || r == '-' || r == '_'
+}
+
 type AbstractTokenizer struct {
 	keeper Keeper
 }
@@ -41,6 +48,12 @@ type Tokenizer interface {
 func NewSimpleTokenizer() Tokenizer {
 	return &AbstractTokenizer{
 		keeper: &SimpleKeeper{},
+	}
+}
+
+func NewSimpleTokenizerII() Tokenizer {
+	return &AbstractTokenizer{
+		keeper: &SimpleKeeperII{},
 	}
 }
 
