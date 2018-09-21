@@ -12,6 +12,12 @@ test: vendor
 bench: vendor
 	cd index && go test -v -bench . -benchmem
 
+bench_index: vendor
+	cd index && go test -v -bench BenchmarkIndex -cpuprofile=cpu.out && go tool pprof —http cpu.out
+
+clean-index:
+	rm -f index/cpu* index/profile*.pdf
+
 vendor:
 	dep ensure
 
