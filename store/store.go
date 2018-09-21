@@ -1,8 +1,9 @@
 package store
 
 import (
-	"github.com/athoune/yangtze/token"
 	"sync"
+
+	"github.com/athoune/yangtze/token"
 )
 
 const Nothing = Word(0)
@@ -21,7 +22,7 @@ func New(tokenizer token.Tokenizer) *Store {
 	}
 }
 
-func NewSimple() *Store {
+func NewSimpleStore() *Store {
 	return &Store{
 		Words:     NewMapKV(),
 		Tokenizer: token.NewSimpleTokenizer(),

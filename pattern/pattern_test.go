@@ -1,13 +1,14 @@
 package pattern
 
 import (
+	"testing"
+
 	"github.com/athoune/yangtze/store"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 func TestParse(t *testing.T) {
-	s := store.NewSimple()
+	s := store.NewSimpleStore()
 	parser := NewParser(s)
 	p, err := parser.Parse([]byte("sudo pam_unix ... session opened for user*"))
 	assert.Nil(t, err)
@@ -21,7 +22,7 @@ func TestParse(t *testing.T) {
 }
 
 func TestMatch(t *testing.T) {
-	s := store.NewSimple()
+	s := store.NewSimpleStore()
 	parser := NewParser(s)
 	p, err := parser.Parse([]byte("a b . d"))
 	assert.Nil(t, err)
@@ -39,7 +40,7 @@ func TestMatch(t *testing.T) {
 }
 
 func TestMoreMatch(t *testing.T) {
-	s := store.NewSimple()
+	s := store.NewSimpleStore()
 	parser := NewParser(s)
 	p, err := parser.Parse([]byte("beuha ... aussi"))
 	assert.Nil(t, err)

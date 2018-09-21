@@ -1,12 +1,13 @@
 package store
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestStore(t *testing.T) {
-	s := NewSimple()
+	s := NewSimpleStore()
 	a1 := s.AddWord([]byte("pim"))
 	a2 := s.AddWord([]byte("pam"))
 	a3 := s.AddWord([]byte("poum"))

@@ -2,17 +2,18 @@ package index
 
 import (
 	"fmt"
+	"io"
+	"regexp"
+	"testing"
+
 	"github.com/athoune/yangtze/store"
 	"github.com/athoune/yangtze/token"
 	radix "github.com/hashicorp/go-immutable-radix"
 	"github.com/stretchr/testify/assert"
-	"io"
-	"regexp"
-	"testing"
 )
 
 func TestWatchFor(t *testing.T) {
-	i, err := NewSimple()
+	i, err := NewSimpleIndex()
 	assert.Nil(t, err)
 	p, err := i.Parser().Parse([]byte("beuha ... aussi"))
 	assert.Nil(t, err)
@@ -24,7 +25,7 @@ func TestWatchFor(t *testing.T) {
 }
 
 func BenchmarkIndex(b *testing.B) {
-	idx, err := NewSimple()
+	idx, err := NewSimpleIndex()
 	if err != nil {
 		panic(err)
 	}
@@ -83,7 +84,7 @@ func benchBuffer(t token.Tokenizer, b *testing.B) {
 }
 
 func BenchmarkSentence(b *testing.B) {
-	idx, _ := NewSimple()
+	idx, _ := NewSimpleIndex()
 	idx.Parser().Parse([]byte("beuha ... aussi"))
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
@@ -96,7 +97,7 @@ func BenchmarkSentence(b *testing.B) {
 }
 
 func BenchmarkMatch(b *testing.B) {
-	idx, _ := NewSimple()
+	idx, _ := NewSimpleIndex()
 	s1 := idx.store.Sentence([]byte("Rien à voir"))
 	s2 := idx.store.Sentence([]byte("beuha super aussi"))
 	p, _ := idx.Parser().Parse([]byte("beuha ... aussi"))
@@ -142,7 +143,7 @@ func BenchmarkOneRegexp(b *testing.B) {
 }
 
 func BenchmarkWord(b *testing.B) {
-	s := store.NewSimple()
+	s := store.NewSimpleStore()
 	s.AddWord([]byte("beuha"))
 	s.AddWord([]byte("aussi"))
 	b.ResetTimer()

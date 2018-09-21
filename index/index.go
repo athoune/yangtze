@@ -1,10 +1,11 @@
 package index
 
 import (
+	"sync"
+
 	"github.com/athoune/yangtze/pattern"
 	"github.com/athoune/yangtze/store"
 	"github.com/athoune/yangtze/token"
-	"sync"
 )
 
 type Index struct {
@@ -20,9 +21,9 @@ func New(tokenizer token.Tokenizer) (*Index, error) {
 	}, nil
 }
 
-func NewSimple() (*Index, error) {
+func NewSimpleIndex() (*Index, error) {
 	return &Index{
-		store:   store.NewSimple(),
+		store:   store.NewSimpleStore(),
 		inverse: make(map[store.Word][]*pattern.Pattern),
 	}, nil
 }

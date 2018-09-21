@@ -1,10 +1,11 @@
 package pattern
 
 import (
+	"io"
+
 	"github.com/athoune/yangtze/store"
 	"github.com/athoune/yangtze/token"
 	"github.com/willf/bitset"
-	"io"
 )
 
 type Kind int
