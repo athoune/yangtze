@@ -70,11 +70,3 @@ func TestMatch(t *testing.T) {
 		true, "a b c d",
 	)
 }
-
-func TestMoreMatch(t *testing.T) {
-	s := store.NewSimpleStore()
-	parser := NewParser(s)
-	p, err := parser.Parse([]byte("beuha ... aussi"))
-	assert.NoError(t, err)
-	assert.False(t, p.Match(s.Sentence([]byte("Aussi super beuha"))))
-}
