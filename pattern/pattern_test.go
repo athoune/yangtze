@@ -21,22 +21,54 @@ func TestParse(t *testing.T) {
 	assert.Equal(t, 4, p.Tokens[2].Sentence.Length())
 }
 
-func TestMatch(t *testing.T) {
+type testPattern struct {
+	parser *Parser
+	store  *store.Store
+	t      *testing.T
+}
+
+func newTestPattern(t *testing.T) *testPattern {
 	s := store.NewSimpleStore()
-	parser := NewParser(s)
-	p, err := parser.Parse([]byte("a b . d"))
-	assert.NoError(t, err)
-	assert.True(t, p.Match(s.Sentence([]byte("a b c d"))))
-	assert.False(t, p.Match(s.Sentence([]byte("a b  d"))))
-	p, err = parser.Parse([]byte("a b ... d"))
-	assert.NoError(t, err)
-	assert.True(t, p.Match(s.Sentence([]byte("a b c d"))))
-	assert.True(t, p.Match(s.Sentence([]byte("a b a b d"))))
-	p, err = parser.Parse([]byte("a b ? d"))
-	assert.NoError(t, err)
-	assert.True(t, p.Match(s.Sentence([]byte("a b c d"))))
-	assert.True(t, p.Match(s.Sentence([]byte("a b d"))))
-	assert.False(t, p.Match(s.Sentence([]byte("a b a b d"))))
+	return &testPattern{
+		parser: NewParser(s),
+		store:  s,
+		t:      t,
+	}
+}
+
+func (t *testPattern) test(pattern string, lines ...interface{}) {
+	p, err := t.parser.Parse([]byte(pattern))
+	assert.NoError(t.t, err)
+	var (
+		test bool
+		line string
+	)
+	for i := 0; i < len(lines); i += 2 {
+		test = lines[i].(bool)
+		line = lines[i+1].(string)
+		assert.Equal(t.t, test, p.Match(t.store.Sentence([]byte(line))), "'%s' -> '%s' %v", pattern, line, test)
+	}
+}
+
+func TestMatch(t *testing.T) {
+	tp := newTestPattern(t)
+	tp.test("a b . d",
+		true, "a b c d",
+		false, "a b  d",
+	)
+	tp.test("a b ... d",
+		true, "a b c d",
+		true, "a b a b d",
+	)
+	tp.test("a b ? d",
+		true, "a b c d",
+		true, "a b d",
+		false, "a b a b d",
+	)
+	tp.test("a b ...",
+		false, "b c d",
+		true, "a b c d",
+	)
 }
 
 func TestMoreMatch(t *testing.T) {
