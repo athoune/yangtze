@@ -8,30 +8,35 @@ import (
 	"github.com/athoune/yangtze/token"
 )
 
+// Index is a bag of words and an inversed index Word => Pattern
 type Index struct {
-	store   *store.Store
+	Store   *store.Store
 	inverse map[store.Word][]*pattern.Pattern
 	mux     sync.Mutex
 }
 
+// New Index
 func New(tokenizer token.Tokenizer) (*Index, error) {
 	return &Index{
-		store:   store.New(tokenizer),
+		Store:   store.New(tokenizer),
 		inverse: make(map[store.Word][]*pattern.Pattern),
 	}, nil
 }
 
+// NewSimpleIndex return an Index, build this a SimpleStore
 func NewSimpleIndex() (*Index, error) {
 	return &Index{
-		store:   store.NewSimpleStore(),
+		Store:   store.NewSimpleStore(),
 		inverse: make(map[store.Word][]*pattern.Pattern),
 	}, nil
 }
 
+// Parser of this Index
 func (i *Index) Parser() *pattern.Parser {
-	return pattern.NewParser(i.store)
+	return pattern.NewParser(i.Store)
 }
 
+// AddPattern add a pattern object
 func (i *Index) AddPattern(p *pattern.Pattern) {
 	i.mux.Lock()
 	defer i.mux.Unlock()
@@ -46,17 +51,19 @@ func (i *Index) AddPattern(p *pattern.Pattern) {
 	}
 }
 
-func (i *Index) AddPatternBytes(b []byte) error {
+// AddPatternBytes add a pattern line, return its Pattern object and a potential error
+func (i *Index) AddPatternBytes(b []byte) (*pattern.Pattern, error) {
 	p, err := i.Parser().Parse(b)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	i.AddPattern(p)
-	return nil
+	return p, nil
 }
 
+// ReadLine read a line and returns patterns that match the line and if any pattern match
 func (i *Index) ReadLine(line []byte) ([]*pattern.Pattern, bool) {
-	sentence := i.store.Sentence(line)
+	sentence := i.Store.Sentence(line)
 	var w store.Word = 0
 	for _, ww := range sentence.Words {
 		if ww != 0 {

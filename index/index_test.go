@@ -15,7 +15,7 @@ import (
 func TestIndex(t *testing.T) {
 	i, err := NewSimpleIndex()
 	assert.NoError(t, err)
-	err = i.AddPatternBytes([]byte("Failed password for ... from ... port . ssh2"))
+	_, err = i.AddPatternBytes([]byte("Failed password for ... from ... port . ssh2"))
 	assert.NoError(t, err)
 	_, ok := i.ReadLine([]byte("Mar  7 17:51:50 sd-127470 sshd[12455]: Failed password for invalid user cron from 51.15.72.126 port 59758 ssh2"))
 	assert.True(t, ok)
@@ -98,17 +98,17 @@ func BenchmarkSentence(b *testing.B) {
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		if i%10 <= 8 {
-			idx.store.Sentence([]byte("Rien à voir"))
+			idx.Store.Sentence([]byte("Rien à voir"))
 		} else {
-			idx.store.Sentence([]byte("beuha super aussi"))
+			idx.Store.Sentence([]byte("beuha super aussi"))
 		}
 	}
 }
 
 func BenchmarkMatch(b *testing.B) {
 	idx, _ := NewSimpleIndex()
-	s1 := idx.store.Sentence([]byte("Rien à voir"))
-	s2 := idx.store.Sentence([]byte("beuha super aussi"))
+	s1 := idx.Store.Sentence([]byte("Rien à voir"))
+	s2 := idx.Store.Sentence([]byte("beuha super aussi"))
 	p, _ := idx.Parser().Parse([]byte("beuha ... aussi"))
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
