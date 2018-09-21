@@ -1,20 +1,8 @@
 package pattern
 
 import (
-	"io"
-
 	"github.com/athoune/yangtze/store"
-	"github.com/athoune/yangtze/token"
 	"github.com/willf/bitset"
-)
-
-type Kind int
-
-const (
-	JustAToken Kind = iota
-	Star            // .
-	Optional        // ?
-	AllStars        // ...
 )
 
 type Pattern struct {
@@ -22,77 +10,6 @@ type Pattern struct {
 	bitset        *bitset.BitSet
 	sentence      *store.Sentence
 	HasStartsWith bool
-}
-
-type Parser struct {
-	tokenizer token.Tokenizer
-	store     *store.Store
-}
-
-func NewParser(s *store.Store) *Parser {
-	return &Parser{
-		tokenizer: token.NewNotSpaceTokenizer(),
-		store:     s,
-	}
-}
-
-type Token struct {
-	Value      []byte
-	Kind       Kind
-	Position   int
-	StartsWith bool // *
-	Sentence   *store.Sentence
-}
-
-func NewToken(value []byte) *Token {
-	s := len(value) > 0 && value[len(value)-1] == byte('*')
-	if s {
-		value = value[0 : len(value)-1]
-	}
-	return &Token{
-		Kind:       whatKind(value),
-		Value:      value,
-		StartsWith: s,
-		Sentence:   store.NewSentence(),
-	}
-}
-
-func whatKind(value []byte) Kind {
-	switch string(value) {
-	case ".":
-		return Star
-	case "?":
-		return Optional
-	case "...":
-		return AllStars
-	default:
-		return JustAToken
-	}
-}
-
-func (p *Parser) Parse(src []byte) (*Pattern, error) {
-	tokens := p.tokenizer.Tokenize(src)
-	s := Pattern{
-		Tokens:        make([]*Token, 0),
-		bitset:        bitset.New(0),
-		HasStartsWith: false,
-	}
-	var previous *Token = nil
-	for tok, err := tokens.Read(); err != io.EOF; tok, err = tokens.Read() {
-		t := NewToken(tok)
-		if previous == nil || t.Kind != JustAToken || (t.Kind == JustAToken && previous.Kind != JustAToken) {
-			s.Tokens = append(s.Tokens, t)
-			previous = t
-		}
-		if t.Kind == JustAToken {
-			w := p.store.AddWord(tok)
-			previous.Sentence.Add(w)
-			s.bitset.Set(uint(w))
-		}
-		s.HasStartsWith = s.HasStartsWith || t.StartsWith
-	}
-
-	return &s, nil
 }
 
 func (p *Pattern) Match(sentence *store.Sentence) bool {
