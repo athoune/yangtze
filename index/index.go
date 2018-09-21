@@ -46,6 +46,15 @@ func (i *Index) AddPattern(p *pattern.Pattern) {
 	}
 }
 
+func (i *Index) AddPatternBytes(b []byte) error {
+	p, err := i.Parser().Parse(b)
+	if err != nil {
+		return err
+	}
+	i.AddPattern(p)
+	return nil
+}
+
 func (i *Index) ReadLine(line []byte) ([]*pattern.Pattern, bool) {
 	sentence := i.store.Sentence(line)
 	var w store.Word = 0

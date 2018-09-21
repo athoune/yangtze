@@ -28,6 +28,15 @@ The pattern should be :
 
     Failed password for ... from ... port . ssh2
 
+API
+---
+
+```golang
+idx, err := index.NewSimpleIndex()
+err = i.AddPatternBytes([]byte("Failed password for ... from ... port . ssh2"))
+_, ok := i.ReadLine([]byte("Mar  7 17:51:50 sd-127470 sshd[12455]: Failed password for invalid user cron from 51.15.72.126 port 59758 ssh2"))
+```
+
 Licence
 -------
 

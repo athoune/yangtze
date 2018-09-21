@@ -12,6 +12,15 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestIndex(t *testing.T) {
+	i, err := NewSimpleIndex()
+	assert.NoError(t, err)
+	err = i.AddPatternBytes([]byte("Failed password for ... from ... port . ssh2"))
+	assert.NoError(t, err)
+	_, ok := i.ReadLine([]byte("Mar  7 17:51:50 sd-127470 sshd[12455]: Failed password for invalid user cron from 51.15.72.126 port 59758 ssh2"))
+	assert.True(t, ok)
+}
+
 func TestWatchFor(t *testing.T) {
 	i, err := NewSimpleIndex()
 	assert.Nil(t, err)
