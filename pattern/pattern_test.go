@@ -52,6 +52,15 @@ func (t *testPattern) test(pattern string, lines ...interface{}) {
 
 func TestMatch(t *testing.T) {
 	tp := newTestPattern(t)
+	tp.test("a",
+		true, "a",
+		false, "b",
+	)
+	tp.test("a b",
+		true, "a b",
+		false, "a b c",
+		false, "a c",
+	)
 	tp.test("a b . d",
 		true, "a b c d",
 		false, "a b  d",
@@ -59,14 +68,32 @@ func TestMatch(t *testing.T) {
 	tp.test("a b ... d",
 		true, "a b c d",
 		true, "a b a b d",
+		true, "a b a b a d",
+		true, "a b d",
+		false, "a b c c",
 	)
 	tp.test("a b ? d",
 		true, "a b c d",
 		true, "a b d",
 		false, "a b a b d",
 	)
+	tp.test("",
+		false, "a",
+		false, "a b c",
+	)
+	tp.test("...",
+		true, "a",
+		true, "a b c",
+	)
+	tp.test("... a b",
+		true, "a b",
+		true, "a a b",
+		true, "a a a b",
+		false, "a b c",
+	)
 	tp.test("a b ...",
-		false, "b c d",
 		true, "a b c d",
+		true, "a b",
+		false, "b c d",
 	)
 }
