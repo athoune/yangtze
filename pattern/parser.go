@@ -27,7 +27,7 @@ func (p *Parser) Parse(src []byte) (*Pattern, error) {
 		bitset:        bitset.New(0),
 		HasStartsWith: false,
 	}
-	var previous *Token = nil
+	var previous *Token
 	for tok, err := tokens.Read(); err != io.EOF; tok, err = tokens.Read() {
 		t := NewToken(tok)
 		if previous == nil || t.Kind != JustAToken || (t.Kind == JustAToken && previous.Kind != JustAToken) {
