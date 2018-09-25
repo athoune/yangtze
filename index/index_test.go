@@ -21,6 +21,20 @@ func TestIndex(t *testing.T) {
 	assert.True(t, ok)
 }
 
+func TestTwoIndexOneStore(t *testing.T) {
+	i1, err := NewSimpleIndex()
+	assert.NoError(t, err)
+	i2, err := NewSimpleIndex()
+	assert.NoError(t, err)
+	i2.Store = i1.Store
+	_, err = i1.AddPatternBytes([]byte("aunt pim ..."))
+	assert.NoError(t, err)
+	_, ok := i1.ReadLine([]byte("aunt pim and the captain"))
+	assert.True(t, ok)
+	_, ok = i2.ReadLine([]byte("aunt pim and the captain"))
+	assert.False(t, ok)
+}
+
 func TestWatchFor(t *testing.T) {
 	i, err := NewSimpleIndex()
 	assert.Nil(t, err)
