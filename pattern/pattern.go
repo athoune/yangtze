@@ -40,7 +40,11 @@ func (p *Pattern) Match(sentence *store.Sentence) bool {
 				return false
 			}
 			start += tok.Sentence.Length() + idx
-			if start == sentence.Length() && (i+1) == len(p.Tokens) {
+			if start == sentence.Length() && (i+1) == len(p.Tokens) { // sentence read is complete and pattern iteration is complete
+				return true
+			}
+		case AllStars:
+			if start == len(p.Tokens) { // pattern ends with ...
 				return true
 			}
 		}
