@@ -16,6 +16,12 @@ func (p *Pattern) Match(sentence *store.Sentence) bool {
 	if !sentence.Bitset.IsSuperSet(p.bitset) {
 		return false
 	}
+	if len(p.Tokens) == 0 { // Empty pattern
+		return false
+	}
+	if len(p.Tokens) == 1 && p.Tokens[0].Kind == AllStars { // "..." all pattern
+		return true
+	}
 	start := 0
 	mode := AllStars
 	for i, tok := range p.Tokens {
