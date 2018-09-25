@@ -1,10 +1,12 @@
 package store
 
 import (
-	"github.com/willf/bitset"
 	"io"
+
+	"github.com/willf/bitset"
 )
 
+// Sentence is collection of Words, with a cache
 type Sentence struct {
 	Words  []Word
 	Bitset *bitset.BitSet
@@ -90,19 +92,29 @@ func (s *Sentence) Index(substr *Sentence) int {
 	return Index(s.Words, substr.Words)
 }
 
+// Index return index of substr in s
 func Index(s []Word, substr []Word) int {
 	if len(substr) == 0 || len(s) == 0 || len(substr) > len(s) {
 		return -1
 	}
 	i2 := 0
-	for i1, w1 := range s {
-		if w1 == substr[i2] {
-			i2 += 1
+	i1 := 0
+	for i1 < len(s) {
+		if s[i1] == substr[i2] {
+			i2++
+			i1++
 			if i2 == len(substr) {
-				return i1 - len(substr) + 1
+				return i1 - len(substr)
 			}
 		} else {
 			i2 = 0
+			if s[i1] == substr[i2] {
+				i2++
+				if i2 == len(substr) {
+					return i1 - len(substr)
+				}
+			}
+			i1++
 		}
 	}
 	return -1

@@ -1,8 +1,9 @@
 package store
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestSentence(t *testing.T) {
@@ -16,4 +17,7 @@ func TestSentence(t *testing.T) {
 	assert.Equal(t, -1, s1.Index(s3))
 	assert.Equal(t, -1, s2.Index(s1))
 	assert.Equal(t, 0, s1.Index(NewSentence(1)))
+	s4 := NewSentence(1, 1, 2, 3)
+	s5 := NewSentence(1, 2, 3)
+	assert.Equal(t, 1, s4.Index(s5))
 }
