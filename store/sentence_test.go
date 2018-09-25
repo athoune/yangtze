@@ -20,4 +20,6 @@ func TestSentence(t *testing.T) {
 	s4 := NewSentence(1, 1, 2, 3)
 	s5 := NewSentence(1, 2, 3)
 	assert.Equal(t, 1, s4.Index(s5))
+	s4 = NewSentence(1, 1, 1, 2, 3)
+	assert.Equal(t, 2, s4.Index(s5))
 }
