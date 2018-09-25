@@ -27,7 +27,7 @@ func (p *Pattern) Match(sentence *store.Sentence) bool {
 	for i, tok := range p.Tokens {
 		switch tok.Kind {
 		case Star:
-			start += 1
+			start++
 		case JustAToken:
 			idx := store.Index(sentence.Words[start:len(sentence.Words)], tok.Sentence.Words)
 			if idx == -1 {
