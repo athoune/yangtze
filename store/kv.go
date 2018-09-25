@@ -7,6 +7,7 @@ import (
 type kv interface {
 	Set([]byte, Word)
 	Get([]byte) (Word, bool)
+	Length() int
 }
 
 type RadixKV struct {
@@ -25,6 +26,10 @@ func (r *RadixKV) Get(k []byte) (Word, bool) {
 	return Word(0), false
 }
 
+func (r *RadixKV) Length() int {
+	return r.store.Len()
+}
+
 func NewRadixKV() *RadixKV {
 	return &RadixKV{radix.New()}
 }
@@ -40,6 +45,10 @@ func (m *MapKV) Set(k []byte, v Word) {
 func (m *MapKV) Get(k []byte) (Word, bool) {
 	v, ok := m.store[string(k)]
 	return v, ok
+}
+
+func (m *MapKV) Length() int {
+	return len(m.store)
 }
 
 func NewMapKV() *MapKV {
