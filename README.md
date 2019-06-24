@@ -1,6 +1,8 @@
 Yangtze (长江 Yángzǐ Jiāng)
 ===========================
 
+[![Build Status](https://drone.garambrogne.net/api/badges/athoune/yangtze/status.svg)](https://drone.garambrogne.net/athoune/yangtze)
+
 Watch for text pattern using tokens and radix tree.
 
 Yangtze target is filtering massive flow of logs.
