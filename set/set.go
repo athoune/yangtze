@@ -1,8 +1,9 @@
 package set
 
 import (
-	"github.com/athoune/yangtze/store"
 	"sort"
+
+	"github.com/athoune/yangtze/store"
 )
 
 type Set []uint32
@@ -19,7 +20,7 @@ func NewSet(words *store.Sentence) Set {
 		}
 	}
 	if clean[0] == 0 {
-		return clean[1:len(clean)]
+		return clean[1:]
 	}
 	return clean
 }
@@ -31,7 +32,7 @@ func (s Set) Contains(other Set) bool {
 	start := 0
 	for _, o := range other {
 		ok := false
-		for i, a := range s[start:len(s)] {
+		for i, a := range s[start:] {
 			if a == o {
 				ok = true
 				start = i

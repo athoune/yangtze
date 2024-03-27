@@ -108,7 +108,8 @@ func benchBuffer(t token.Tokenizer, b *testing.B) {
 
 func BenchmarkSentence(b *testing.B) {
 	idx, _ := NewSimpleIndex()
-	idx.Parser().Parse([]byte("beuha ... aussi"))
+	_, err := idx.Parser().Parse([]byte("beuha ... aussi"))
+	assert.NoError(b, err)
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		if i%10 <= 8 {

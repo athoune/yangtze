@@ -42,7 +42,8 @@ func (i *Index) AddPattern(p *pattern.Pattern) {
 	defer i.mux.Unlock()
 	for _, word := range p.Sentence().Words {
 		if word != store.Nothing {
-			if _, ok := i.inverse[word]; ok {
+			var ok bool
+			if _, ok = i.inverse[word]; ok {
 				i.inverse[word] = append(i.inverse[word], p)
 			} else {
 				i.inverse[word] = []*pattern.Pattern{p}
