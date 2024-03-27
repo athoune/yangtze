@@ -2,7 +2,7 @@ package pattern
 
 import (
 	"github.com/athoune/yangtze/store"
-	"github.com/willf/bitset"
+	"github.com/bits-and-blooms/bitset"
 )
 
 type Pattern struct {

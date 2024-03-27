@@ -5,7 +5,7 @@ import (
 
 	"github.com/athoune/yangtze/store"
 	"github.com/athoune/yangtze/token"
-	"github.com/willf/bitset"
+	"github.com/bits-and-blooms/bitset"
 )
 
 type Parser struct {

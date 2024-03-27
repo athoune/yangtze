@@ -3,7 +3,7 @@ package store
 import (
 	"io"
 
-	"github.com/willf/bitset"
+	"github.com/bits-and-blooms/bitset"
 )
 
 // Sentence is collection of Words, with a cache
